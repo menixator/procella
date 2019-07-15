@@ -1,0 +1,17 @@
+%compile_commands.json
+--target=arm-none-eabi
+--sysroot=/usr/arm-none-eabi
+-mcpu=arm7tdmi
+-mfloat-abi=soft -marm
+-march=armv4t
+-isystem/usr/lib/gcc/arm-none-eabi/8.3.0/include
+-isystem/usr/lib/gcc/arm-none-eabi/8.3.0/include-fixed
+-isystem/usr/lib/gcc/arm-none-eabi/8.3.0/../../../../arm-none-eabi/include/c++/8.3.0
+-isystem/usr/lib/gcc/arm-none-eabi/8.3.0/../../../../arm-none-eabi/include/c++/8.3.0/arm-none-eabi
+-isystem/usr/lib/gcc/arm-none-eabi/8.3.0/../../../../arm-none-eabi/include/c++/8.3.0/backward
+-isystem/usr/lib/gcc/arm-none-eabi/8.3.0/../../../../arm-none-eabi/include
+-isystem/usr/lib/gcc/arm-none-eabi/8.3.0/
+-isystem/usr/lib/gcc/arm-none-eabi/8.3.0/../../../../arm-none-eabi/lib/
+-isystem/usr/arm-none-eabi/lib/
+-D__USES_INITFINI__  -mcpu=arm7tdmi -mfloat-abi=soft -marm -march=armv4t -stdlib=libc++ --stdlib=libstdc++
+

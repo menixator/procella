@@ -1,0 +1,11 @@
+{
+  "name": "microbit-morse-gpio",
+  "version": "0.0.1",
+  "description": "A program to transmit morse code between two microbits using gpio pins",
+  "license": "GPL3",
+  "dependencies": {
+    "microbit": "lancaster-university/microbit#v2.1.1"
+  },
+  "targetDependencies": {},
+  "bin": "src"
+}

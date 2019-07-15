@@ -1,0 +1,5 @@
+.ccls-*
+yotta_modules
+yotta_targets
+compile_commands.json
+build/
