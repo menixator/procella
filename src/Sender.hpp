@@ -10,7 +10,6 @@
 
 #define SENDER_IDLE 20
 #define BUFFER_MAX_SIZE 6
-#define PACKET_SIZE 8
 
 using namespace std;
 

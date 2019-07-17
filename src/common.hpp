@@ -32,6 +32,9 @@ typedef uint8_t MorseTick;
 #define DAH_MIN 500
 #define DAH_MAX 2500
 
+#define PACKET_SIZE 8
+#define BITS_TO_RECEIVE 67
+
 #define CIPHER_KEY "TP@abbgW96NC@2?7"
 #define CIPHER_KEY_LENGTH 16
 
