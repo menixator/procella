@@ -19,7 +19,7 @@
 class XXTEACipher {
 
 private:
-  uint32_t key[XXTEA_KEYLENGTH];
+  uint32_t key[XXTEA_KEYLENGTH] = {0};
 
   // Write a character array to a key
   void write_key(const char *key_arr, const int length);
@@ -33,7 +33,7 @@ public:
 
   // encrypts an arbitrary sized uint32_t block
   void encrypt(uint32_t *data, const unsigned int length);
-  
+
   // decrypts an arbitrary sized uint32_t block
   void decrypt(uint32_t *data, int length);
 };
