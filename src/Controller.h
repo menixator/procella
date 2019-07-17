@@ -22,13 +22,16 @@
 
 class Controller {
 private:
+  // helps differentiate between senders and recievers.
+  enum Role { None, Sender, Receiver };
+
   MicroBit *mbit = new MicroBit();
 
   vector<MorseTick> buffer;
 
   // Whether either of the buttons is held down
   bool isButtonAHeldDown = false;
-  
+
   // Time when the button was held down
   uint64_t holdStartTimestamp = 0;
   uint64_t lastEventTimestamp = 0;
