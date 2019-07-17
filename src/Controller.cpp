@@ -61,4 +61,7 @@ void Controller::start() {
     sender->start();
   }
   // TODO: either read or write.
+  while (true) {
+    mbit->sleep(100);
+  }
 };
