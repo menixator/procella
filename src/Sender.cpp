@@ -3,6 +3,7 @@
 Sender::Sender(MicroBit *mbit) {
   this->mbit = mbit;
   cipher = new XXTEACipher(CIPHER_KEY, CIPHER_KEY_LENGTH);
+  setupListeners();
 };
 
 Sender::~Sender() {
