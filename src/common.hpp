@@ -5,6 +5,15 @@
 #include "MicroBitComponent.h"
 #include <cstdint>
 
+#define SHOULD_DEBUG 1
+#ifdef SHOULD_DEBUG
+#define DEBUGF(mbit, fmt, ...) mbit->serial.printf(fmt, ##__VA_ARGS__)
+#define DEBUG(mbit, fmt, ...) mbit->serial.printf(fmt "\r\n", ##__VA_ARGS__)
+#else
+#define DEBUG(mbit, fmt, ...) 0
+#define DEBUGF(mbit, fmt, ...) 0
+#endif
+
 typedef uint8_t MorseTick;
 
 #define DOT 0
