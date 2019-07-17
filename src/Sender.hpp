@@ -36,7 +36,7 @@ private:
   virtual ~Sender();
 
   void transmit();
-  void sendPrelude();
+  void writeHeader();
   void writeBit(uint8_t bit);
   void writeByte(uint8_t byte);
 

@@ -89,7 +89,7 @@ void Sender::writeByte(uint8_t byte) {
   }
 };
 
-void Sender::sendPrelude() {
+void Sender::writeHeader() {
   writeBit(0);
   writeBit(1);
   writeBit(0);
@@ -114,7 +114,7 @@ void Sender::transmit() {
 
     cipher->encrypt((uint32_t *)packet, 2);
 
-    sendPrelude();
+    writeHeader();
 
     for (int i = 0; i < PACKET_SIZE; i++) {
       writeByte(packet[i]);
