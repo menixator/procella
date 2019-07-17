@@ -13,8 +13,7 @@ typedef uint8_t MorseTick;
 
 #define ESCAPE_CHAR '!'
 
-#define TX_WAIT_DOT 250
-#define TX_WAIT_DASH 500
+#define TX_SLEEP 40
 
 // Some flexible definitions for ranges on the duration that the user can hold
 // down the button/s for.
@@ -23,4 +22,8 @@ typedef uint8_t MorseTick;
 
 #define DAH_MIN 750
 #define DAH_MAX 1500
+
+#define CIPHER_KEY "TP@abbgW96NC@2?7"
+#define CIPHER_KEY_LENGTH 16
+
 #endif /* COMMON_HPP */
