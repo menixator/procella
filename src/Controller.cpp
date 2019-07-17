@@ -40,7 +40,10 @@ void Controller::tearDownListeners() {
                           &Controller::onButtonBPress);
 }
 
-Controller::~Controller() { delete mbit; };
+Controller::~Controller() {
+  tearDownListeners();
+  delete mbit;
+};
 
 void Controller::start() {
   while (role == None) {
