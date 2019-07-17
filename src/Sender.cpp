@@ -4,6 +4,7 @@ Sender::Sender(MicroBit *mbit) {
   this->mbit = mbit;
   cipher = new XXTEACipher(CIPHER_KEY, CIPHER_KEY_LENGTH);
   setupListeners();
+  DEBUG(mbit, "Lexicon length is: %d", morse::LEXICON_LENGTH);
 };
 
 Sender::~Sender() {
@@ -116,8 +117,26 @@ void Sender::transmit() {
   // convert the signal to an intger
   uint8_t value = morse::stoi(&buffer);
 
+  DEBUG(mbit, "value is: %d", value);
+  DEBUGF(mbit, "The sequence is: ");
+  for (MorseTick tick : buffer) {
+    if (tick == DOT) {
+      DEBUGF(mbit, ".");
+    } else {
+      DEBUGF(mbit, "-");
+    }
+  }
+
+  DEBUG(mbit, "");
   // empty the buffer
   buffer.clear();
+
+  DEBUGF(mbit, "Sequence starting from value: ");
+
+  for (int i = value; i < morse::LEXICON_LENGTH; i++) {
+    DEBUGF(mbit, "%c", morse::LEXICON[i]);
+  }
+  DEBUG(mbit, "");
 
   // TODO: check if the value is a special character
   if (morse::isValid(value)) {
@@ -125,6 +144,8 @@ void Sender::transmit() {
     DEBUG(mbit, "character is: %c", morse::LEXICON[value]);
     // obfuscate the value
     uint8_t obfuscated_value = morse::obfuscate(value, CEASER_SHIFT);
+
+    DEBUG(mbit, "obfuscated value is: %d", obfuscated_value);
 
     uint8_t packet[PACKET_SIZE] = {
         morse::ESC, obfuscated_value, utils::parity(obfuscated_value), 0, 0, 0,
