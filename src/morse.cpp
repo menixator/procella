@@ -7,8 +7,8 @@ namespace morse {
  * morse code. The exclamation mark is a placeholder to make sure that the
  * binary tree is a complete one.
  */
-const char *LEXICON = "etianmsurwdkgohvf!l!pjbxcyzq!!54!3!!!2!!+!!!!16=/"
-                      "!!!(!7!8!90!!!!?!\"!!.@!\'!!-!)!,:!!!!!";
+const char *LEXICON = "!!etianmsurwdkgohvf!l!pjbxcyzq!!54!3!!!2!!+!!!!16=/"
+                      "!!!(!7!!!8!90!!!!?!\"!!.@!\'!!-!)!,:!!!!!";
 
 const int LEXICON_LENGTH = strlen(LEXICON);
 
