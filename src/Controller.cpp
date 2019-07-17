@@ -1,9 +1,9 @@
 #include "Controller.h"
 
-void Controller::onButtonAPress(MicroBitEvent event) { onRoleDecided(Sender); };
+void Controller::onButtonAPress(MicroBitEvent event) { onRoleDecided(Alpha); };
 
 void Controller::onButtonBPress(MicroBitEvent event) {
-  onRoleDecided(Receiver);
+  onRoleDecided(Beta);
 };
 
 // Helper to set roles.

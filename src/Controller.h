@@ -5,6 +5,7 @@
 #include "common.hpp"
 #include "morse.hpp"
 #include <vector>
+#include "Sender.hpp"
 
 // How long to sleep when role is undecided
 #define ROLE_CHECK_INTERVAL 15
@@ -12,7 +13,7 @@
 class Controller {
 private:
   // helps differentiate between senders and recievers.
-  enum Role { None, Sender, Receiver };
+  enum Role { None, Alpha, Beta };
 
   MicroBit *mbit = new MicroBit();
 
