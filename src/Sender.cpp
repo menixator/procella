@@ -36,6 +36,8 @@ void Sender::onButtonADown(MicroBitEvent event) {
   if (sending) {
     return;
   }
+
+  mbit->display.printAsync(DOT_IMAGE);
   // If button A was somehow already down, ignore the current event.
   if (buttonADownTimestamp > 0) {
     return;
@@ -68,7 +70,7 @@ void Sender::onButtonAUp(MicroBitEvent event) {
 
   // Reset the value.
   buttonADownTimestamp = 0;
-
+  mbit->display.clear();
   if (buffer.size() >= BUFFER_MAX_SIZE) {
     startTransmitting();
   }
@@ -90,6 +92,11 @@ void Sender::start() {
   while (true) {
     if (sending) {
       transmit();
+    }
+    if (buttonADownTimestamp > 0 &&
+        (mbit->systemTime() - buttonADownTimestamp) > DAH_MIN &&
+        (mbit->systemTime() - buttonADownTimestamp) < DAH_MAX) {
+      mbit->display.printAsync(DASH_IMAGE);
     }
     mbit->sleep(SENDER_IDLE);
   }
@@ -125,6 +132,8 @@ void Sender::writeHeader() {
 }
 
 void Sender::transmit() {
+  mbit->display.clear();
+  mbit->display.animateAsync(TX_ANIM, 650, 5);
   // convert the signal to an intger
   uint8_t value = morse::stoi(&buffer);
 
