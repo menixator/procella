@@ -1,8 +1,14 @@
 #include "Controller.h"
 
-void Controller::onButtonAPress(MicroBitEvent event) { onRoleDecided(Alpha); };
+void Controller::onButtonAPress(MicroBitEvent event) {
+  mbit->display.animateAsync(TX_ANIM, 300, 5);
+  onRoleDecided(Alpha);
+};
 
-void Controller::onButtonBPress(MicroBitEvent event) { onRoleDecided(Beta); };
+void Controller::onButtonBPress(MicroBitEvent event) {
+  mbit->display.animateAsync(RX_ANIM, 300, 5);
+  onRoleDecided(Beta);
+};
 
 // Helper to set roles.
 void Controller::onRoleDecided(Role newRole) {
