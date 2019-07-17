@@ -13,7 +13,7 @@ const char *LEXICON = "etianmsurwdkgohvf!l!pjbxcyzq!!54!3!!!2!!+!!!!16=/"
 const int LEXICON_LENGTH = strlen(LEXICON);
 
 // Determines whether or not a value is special
-bool isSpecial(int value) {
+bool isSpecial(uint8_t value) {
   switch (value) {
   case ESC:
   case OK:
@@ -28,8 +28,8 @@ bool isSpecial(int value) {
   };
 }
 
-// Converts an integer to a deque of booleans
-void itos(int value, vector<MorseTick> *encoded) {
+// Converts an integer to a vector of booleans
+void itos(uint8_t value, vector<MorseTick> *encoded) {
   // If position is even, it's a dot
   while (value > 1) {
     if (value % 2 == 0) {
@@ -58,13 +58,13 @@ int stoi(vector<MorseTick> *encoded) {
 }
 
 // Obfuscates the value by shifting the value to the right in the lexicon
-int obfuscate(int value, int delta) {
+uint8_t obfuscate(uint8_t value, uint8_t delta) {
   value += delta;
   value %= LEXICON_LENGTH;
   return value;
 }
 
-int deobfuscate(int value, int delta) {
+uint8_t deobfuscate(uint8_t value, uint8_t delta) {
   value -= delta;
   // If the value is negative, then convert it to a positive integer, and fit it
   // into the range 0-LEXICON_LENGTH

@@ -38,17 +38,17 @@ enum ControlSequences {
 
 // Determines whether or not a value is special
 
-bool isSpecial(int value);
-// Converts an integer to a deque of booleans
-void itos(int value, vector<MorseTick> *encoded);
+bool isSpecial(uint8_t value);
+// Converts an uint8_teger to a deque of booleans
+void itos(uint8_t value, vector<MorseTick> *encoded);
 
-// Converts a signal to an integer
-int stoi(vector<MorseTick> *encoded);
+// Converts a signal to an uint8_teger
+uint8_t stoi(vector<MorseTick> *encoded);
 
 // Obfuscates the value by shifting the value to the right in the lexicon
-int obfuscate(int value, int delta);
+uint8_t obfuscate(uint8_t value, uint8_t delta);
 
-int deobfuscate(int value, int delta);
+uint8_t deobfuscate(uint8_t value, uint8_t delta);
 
 } // namespace morse
 
