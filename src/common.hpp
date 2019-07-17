@@ -2,7 +2,7 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-#include "MicroBitComponent.h"
+#include "MicroBit.h"
 #include <cstdint>
 
 #define SHOULD_DEBUG 1
@@ -34,5 +34,24 @@ typedef uint8_t MorseTick;
 
 #define CIPHER_KEY "TP@abbgW96NC@2?7"
 #define CIPHER_KEY_LENGTH 16
+
+#define ARROW_TIP 0, 0, 255, 0, 0, 0, 255, 0, 255, 0, 0, 0, 0, 0, 0
+#define ARROW_BODY 0, 255, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0
+#define ARROW_TAIL 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 0, 255, 0, 255, 0
+
+const uint8_t TX_ANIM_DATA[] __attribute__((aligned(4))) = {
+    0xff,      0xff,       15,         0,         5,         0,
+    ARROW_TIP, ARROW_BODY, ARROW_TAIL, ARROW_TIP, ARROW_BODY};
+
+const uint8_t RX_ANIM_DATA[] __attribute__((aligned(4))) = {
+    0xff,       0xff,      15,         0,          5,        0,
+    ARROW_BODY, ARROW_TIP, ARROW_TAIL, ARROW_BODY, ARROW_TIP};
+
+const MicroBitImage
+    DOT_IMAGE("0,0,0,0,0\n 0,0,0,0,0\n 0,0,255,0,0\n 0,0,0,0,0\n 0,0,0,0,0\n");
+const MicroBitImage DASH_IMAGE(
+    "0,0,0,0,0\n 0,0,0,0,0\n 0,255,255,255,0\n 0,0,0,0,0\n 0,0,0,0,0\n");
+const MicroBitImage TX_ANIM((ImageData *)TX_ANIM_DATA);
+const MicroBitImage RX_ANIM((ImageData *)RX_ANIM_DATA);
 
 #endif /* COMMON_HPP */
