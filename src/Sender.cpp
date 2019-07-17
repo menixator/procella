@@ -39,7 +39,7 @@ void Sender::onButtonADown(MicroBitEvent event) {
   if (buttonADownTimestamp > 0) {
     return;
   }
-
+  DEBUG(mbit, "Button A is down!");
   buttonADownTimestamp = event.timestamp / 1000;
 };
 
@@ -51,13 +51,17 @@ void Sender::onButtonAUp(MicroBitEvent event) {
   if (buttonADownTimestamp == 0) {
     return;
   }
+  DEBUG(mbit, "Button A is up!");
 
   uint64_t buttonAUpTimestamp = event.timestamp / 1000;
   uint64_t duration = buttonAUpTimestamp - buttonADownTimestamp;
 
   if (duration >= DIT_MIN && duration < DIT_MAX) {
+    DEBUG(mbit, "Dot added!");
+
     buffer.push_back(DOT);
   } else if (duration >= DAH_MIN && duration < DAH_MAX) {
+    DEBUG(mbit, "Dash added!");
     buffer.push_back(DASH);
   }
 
@@ -66,7 +70,9 @@ void Sender::onButtonAUp(MicroBitEvent event) {
 };
 
 void Sender::onButtonBPress(MicroBitEvent event) {
+  DEBUG(mbit, "Button B is up!");
   if (!sending && buffer.size() > 0) {
+    DEBUG(mbit, "Sending the data soon!");
     sending = true;
   }
 };
