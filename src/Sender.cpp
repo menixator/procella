@@ -112,7 +112,9 @@ void Sender::transmit() {
   buffer.clear();
 
   // TODO: check if the value is a special character
-  if (!morse::isSpecial(value)) {
+  if (morse::isValid(value)) {
+
+    DEBUG(mbit, "character is: %c", morse::LEXICON[value]);
     // obfuscate the value
     uint8_t obfuscated_value = morse::obfuscate(value, CEASER_SHIFT);
 
