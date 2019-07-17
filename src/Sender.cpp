@@ -103,17 +103,17 @@ void Sender::start() {
 };
 
 void Sender::writeBit(uint8_t bit) {
-#if SHOULD_DEBUG
-  static uint64_t last_call = 0;
-  if (last_call > 0) {
-    uint64_t diff = system_timer_current_time() - last_call;
-    if (diff > TX_SLEEP)
-      DEBUG(mbit, "diff is: %d milliseconds", diff);
-    last_call = system_timer_current_time();
-  } else {
-    last_call = system_timer_current_time() - last_call;
+  if (SHOULD_DEBUG) {
+    static uint64_t last_call = 0;
+    if (last_call > 0) {
+      uint64_t diff = system_timer_current_time() - last_call;
+      if (diff > TX_SLEEP)
+        DEBUG(mbit, "diff is: %d milliseconds", diff);
+      last_call = system_timer_current_time();
+    } else {
+      last_call = system_timer_current_time() - last_call;
+    }
   }
-#endif
   mbit->io.P0.setDigitalValue(bit > 0);
   mbit->sleep(TX_SLEEP);
 };
