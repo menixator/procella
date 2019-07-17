@@ -67,10 +67,18 @@ void Sender::onButtonAUp(MicroBitEvent event) {
 
   // Reset the value.
   buttonADownTimestamp = 0;
+
+  if (buffer.size() >= BUFFER_MAX_SIZE) {
+    startTransmitting();
+  }
 };
 
 void Sender::onButtonBPress(MicroBitEvent event) {
   DEBUG(mbit, "Button B is up!");
+  startTransmitting();
+};
+
+void Sender::startTransmitting() {
   if (!sending && buffer.size() > 0) {
     DEBUG(mbit, "Sending the data soon!");
     sending = true;
