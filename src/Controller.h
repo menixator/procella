@@ -6,18 +6,8 @@
 #include "morse.hpp"
 #include <vector>
 
-// Some flexible definitions for ranges on the duration that the user can hold
-// down the button/s for.
-#define DIT_MIN 250
-#define DIT_MAX 500
-
-#define DAH_MIN 750
-#define DAH_MAX 1500
-
 // How long to sleep when role is undecided
 #define ROLE_CHECK_INTERVAL 15
-
-#define PACKET_SIZE 3
 
 class Controller {
 private:
