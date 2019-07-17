@@ -12,6 +12,10 @@ void Controller::onRoleDecided(Role newRole) {
     return;
   }
 
+  // When a role is decided, the listeners are torn down before changing the
+  // role
+  tearDownListeners();
+
   role = newRole;
 }
 
@@ -25,6 +29,11 @@ void Controller::setupListeners() {
 };
 
 void Controller::tearDownListeners() {
+  // If the role has been decided, assume that the listeners are already
+  // removed.
+  if (role != None) {
+    return;
+  }
   mbit->messageBus.ignore(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_CLICK, this,
                           &Controller::onButtonAPress);
   mbit->messageBus.ignore(MICROBIT_ID_BUTTON_B, MICROBIT_BUTTON_EVT_CLICK, this,
