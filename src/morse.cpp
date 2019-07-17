@@ -45,7 +45,7 @@ void itos(uint8_t value, vector<MorseTick> *encoded) {
 }
 
 // Converts a signal to an integer
-int stoi(vector<MorseTick> *encoded) {
+uint8_t stoi(vector<MorseTick> *encoded) {
   int pos = 1;
   for (const MorseTick &tick : *encoded) {
     if (tick == DOT) {
