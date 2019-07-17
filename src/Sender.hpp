@@ -32,7 +32,6 @@ private:
   void setupListeners();
   void tearDownListeners();
 
-  Sender(MicroBit *mbit);
   virtual ~Sender();
 
   void transmit();
@@ -41,6 +40,7 @@ private:
   void writeByte(uint8_t byte);
 
 public:
+  Sender(MicroBit *mbit);
   void start();
 };
 
