@@ -33,7 +33,7 @@ enum ControlSequences {
   // End Of Work
   EOW = 69,
   // Error
-  ERR = 256,
+  ERR = 128,
 };
 
 // Determines whether or not a value is special
