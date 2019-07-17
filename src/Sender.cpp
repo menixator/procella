@@ -12,6 +12,7 @@ Sender::~Sender() {
 };
 
 void Sender::setupListeners() {
+  DEBUG(mbit, "Setting up listeners");
   mbit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_DOWN, this,
                           &Sender::onButtonADown);
   mbit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_UP, this,
@@ -80,6 +81,7 @@ void Sender::start() {
 };
 
 void Sender::writeBit(uint8_t bit) {
+  DEBUGF(mbit, "%d", bit);
   mbit->io.P0.setDigitalValue(bit > 0);
   mbit->sleep(TX_SLEEP);
 };

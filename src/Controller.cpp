@@ -44,14 +44,14 @@ Controller::~Controller() {
 };
 
 void Controller::start() {
-  DEBUGF(mbit, "Controller is starting");
+  DEBUG(mbit, "Controller is starting");
   while (role == None) {
     mbit->sleep(ROLE_CHECK_INTERVAL);
   }
   if (role == Alpha) {
-    DEBUGF(mbit, "Initialized as a sender!");
+    DEBUG(mbit, "Initialized as a sender!");
     Sender *sender = new Sender(mbit);
-    DEBUGF(mbit, "Sender has been intialized");
+    DEBUG(mbit, "Sender has been intialized");
     sender->start();
   }
   // TODO: either read or write.
