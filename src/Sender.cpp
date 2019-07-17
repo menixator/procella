@@ -162,23 +162,27 @@ void Sender::transmit() {
         morse::ESC, obfuscated_value, utils::parity(obfuscated_value), 0, 0, 0,
         0,          morse::EOW};
 
+#if SHOULD_DEBUG
     DEBUGF(mbit, "char raw[] = {");
     for (int i = 0; i < PACKET_SIZE; i++) {
       DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
-      writeByte(packet[i]);
     }
     DEBUG(mbit, "}");
+#endif
 
     cipher->encrypt((uint32_t *)packet, 2);
-
-    writeHeader();
 
     DEBUGF(mbit, "char encrypted[] = {");
     for (int i = 0; i < PACKET_SIZE; i++) {
       DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
-      writeByte(packet[i]);
     }
     DEBUG(mbit, "}");
+
+    writeHeader();
+
+    for (int i = 0; i < PACKET_SIZE; i++) {
+      writeByte(packet[i]);
+    }
   }
 
   // Reset the value
