@@ -2,12 +2,15 @@
 #define SENDER_HPP
 
 #include "MicroBit.h"
+#include "XXTEACipher.hpp"
 #include "common.hpp"
 #include "morse.hpp"
+#include "utils.hpp"
 #include <vector>
 
 #define SENDER_IDLE 20
-#define PACKET_SIZE 3
+
+#define PACKET_SIZE 8
 
 using namespace std;
 
@@ -15,6 +18,8 @@ class Sender {
 private:
   MicroBit *mbit;
   vector<MorseTick> buffer;
+  XXTEACipher *cipher;
+
   bool sending = false;
 
   // Timestamp of the last time a was pressed in microseconds.
@@ -31,6 +36,9 @@ private:
   virtual ~Sender();
 
   void transmit();
+  void sendPrelude();
+  void writeBit(uint8_t bit);
+  void writeByte(uint8_t byte);
 
 public:
   void start();

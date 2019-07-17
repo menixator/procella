@@ -1,8 +1,14 @@
 #include "Sender.hpp"
 
-Sender::Sender(MicroBit *mbit) { this->mbit = mbit; };
+Sender::Sender(MicroBit *mbit) {
+  this->mbit = mbit;
+  cipher = new XXTEACipher(CIPHER_KEY, CIPHER_KEY_LENGTH);
+};
 
-Sender::~Sender() { tearDownListeners(); };
+Sender::~Sender() {
+  tearDownListeners();
+  delete cipher;
+};
 
 void Sender::setupListeners() {
   mbit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_DOWN, this,
@@ -72,42 +78,49 @@ void Sender::start() {
   }
 };
 
+void Sender::writeBit(uint8_t bit) {
+  mbit->io.P0.setDigitalValue(bit > 0);
+  mbit->sleep(TX_SLEEP);
+};
+
+void Sender::writeByte(uint8_t byte) {
+  for (int i = 0; i < 8; i++) {
+    writeBit(byte & (1 << (7 - i)));
+  }
+};
+
+void Sender::sendPrelude() {
+  writeBit(0);
+  writeBit(1);
+  writeBit(0);
+  writeBit(1);
+}
+
 void Sender::transmit() {
   // convert the signal to an intger
-  int value = morse::stoi(&buffer);
+  uint8_t value = morse::stoi(&buffer);
 
   // empty the buffer
   buffer.clear();
 
-  // obfuscate the value
-  int obfuscated_value = morse::obfuscate(value, CEASER_SHIFT);
+  // TODO: check if the value is a special character
+  if (!morse::isSpecial(value)) {
+    // obfuscate the value
+    uint8_t obfuscated_value = morse::obfuscate(value, CEASER_SHIFT);
 
-  int packet[PACKET_SIZE] = {morse::ESC, obfuscated_value, morse::EOW};
+    uint8_t packet[PACKET_SIZE] = {
+        morse::ESC, obfuscated_value, utils::parity(obfuscated_value), 0, 0, 0,
+        0,          morse::EOW};
 
-  // Reset the value
-  // mbit->io.P0.setDigitalValue(0);
-  vector<MorseTick> tx_buffer;
-  int delay;
+    cipher->encrypt((uint32_t *)packet, 2);
 
-  for (const int &data : packet) {
-    morse::itos(data, &tx_buffer);
-    for (MorseTick tick : tx_buffer) {
-      mbit->io.P0.setDigitalValue(1);
-      delay = 0;
+    sendPrelude();
 
-      if (tick == DASH) {
-        delay = TX_WAIT_DASH;
-      } else if (tick == DOT) {
-        delay = TX_WAIT_DOT;
-      }
-
-      if (delay > 0) {
-        mbit->sleep(delay);
-      }
+    for (int i = 0; i < PACKET_SIZE; i++) {
+      writeByte(packet[i]);
     }
-
-    tx_buffer.clear();
   }
+
   // Reset the value
   mbit->io.P0.setDigitalValue(0);
 
