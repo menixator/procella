@@ -14,11 +14,10 @@
 #define DAH_MIN 750
 #define DAH_MAX 1500
 
-#define PACKET_SIZE 3
+// How long to sleep when role is undecided
+#define ROLE_CHECK_INTERVAL 15
 
-// Defines how long to wait before sending the message over
-#define IDLE_TIME 3500
-#define IDLE_CHECK_INTERVAL 100
+#define PACKET_SIZE 3
 
 class Controller {
 private:
@@ -27,23 +26,19 @@ private:
 
   MicroBit *mbit = new MicroBit();
 
-  vector<MorseTick> buffer;
-
-  // Whether either of the buttons is held down
-  bool isButtonAHeldDown = false;
-
-  // Time when the button was held down
-  uint64_t holdStartTimestamp = 0;
-  uint64_t lastEventTimestamp = 0;
-
-  void transmit();
+  // Initialize role as none.
+  Role role = None;
 
 public:
-  void onButtonADown(MicroBitEvent event);
-  void onButtonAUp(MicroBitEvent event);
+  void onButtonAPress(MicroBitEvent event);
+  void onButtonBPress(MicroBitEvent event);
+  void onRoleDecided(Role role);
+
+  void setupListeners();
+  void tearDownListeners();
+
   Controller();
   virtual ~Controller();
-  bool isReadyToSend();
   void start();
 };
 
