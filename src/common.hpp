@@ -26,11 +26,11 @@ typedef uint8_t MorseTick;
 
 // Some flexible definitions for ranges on the duration that the user can hold
 // down the button/s for.
-#define DIT_MIN 250
+#define DIT_MIN 0
 #define DIT_MAX 500
 
-#define DAH_MIN 750
-#define DAH_MAX 1500
+#define DAH_MIN 500
+#define DAH_MAX 2500
 
 #define CIPHER_KEY "TP@abbgW96NC@2?7"
 #define CIPHER_KEY_LENGTH 16
