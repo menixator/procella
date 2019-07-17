@@ -87,7 +87,6 @@ void Sender::start() {
 };
 
 void Sender::writeBit(uint8_t bit) {
-  DEBUGF(mbit, "%d", bit);
   mbit->io.P0.setDigitalValue(bit > 0);
   mbit->sleep(TX_SLEEP);
 };
@@ -121,13 +120,23 @@ void Sender::transmit() {
         morse::ESC, obfuscated_value, utils::parity(obfuscated_value), 0, 0, 0,
         0,          morse::EOW};
 
+    DEBUGF(mbit, "char raw[] = {");
+    for (int i = 0; i < PACKET_SIZE; i++) {
+      DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
+      writeByte(packet[i]);
+    }
+    DEBUG(mbit, "}");
+
     cipher->encrypt((uint32_t *)packet, 2);
 
     writeHeader();
 
+    DEBUGF(mbit, "char encrypted[] = {");
     for (int i = 0; i < PACKET_SIZE; i++) {
+      DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
       writeByte(packet[i]);
     }
+    DEBUG(mbit, "}");
   }
 
   // Reset the value
