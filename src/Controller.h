@@ -2,10 +2,10 @@
 #define CONTROLLER_H
 
 #include "MicroBit.h"
+#include "Sender.hpp"
 #include "common.hpp"
 #include "morse.hpp"
 #include <vector>
-#include "Sender.hpp"
 
 // How long to sleep when role is undecided
 #define ROLE_CHECK_INTERVAL 15

@@ -2,9 +2,7 @@
 
 void Controller::onButtonAPress(MicroBitEvent event) { onRoleDecided(Alpha); };
 
-void Controller::onButtonBPress(MicroBitEvent event) {
-  onRoleDecided(Beta);
-};
+void Controller::onButtonBPress(MicroBitEvent event) { onRoleDecided(Beta); };
 
 // Helper to set roles.
 void Controller::onRoleDecided(Role newRole) {
@@ -46,9 +44,15 @@ Controller::~Controller() {
 };
 
 void Controller::start() {
+  DEBUGF(mbit, "Controller is starting");
   while (role == None) {
     mbit->sleep(ROLE_CHECK_INTERVAL);
   }
-
+  if (role == Alpha) {
+    DEBUGF(mbit, "Initialized as a sender!");
+    Sender *sender = new Sender(mbit);
+    DEBUGF(mbit, "Sender has been intialized");
+    sender->start();
+  }
   // TODO: either read or write.
 };
