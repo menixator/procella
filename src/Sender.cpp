@@ -129,25 +129,30 @@ void Sender::transmit() {
   uint8_t value = morse::stoi(&buffer);
 
   DEBUG(mbit, "value is: %d", value);
-  DEBUGF(mbit, "The sequence is: ");
-  for (MorseTick tick : buffer) {
-    if (tick == DOT) {
-      DEBUGF(mbit, ".");
-    } else {
-      DEBUGF(mbit, "-");
-    }
-  }
 
-  DEBUG(mbit, "");
+  if (SHOULD_DEBUG) {
+    DEBUGF(mbit, "The sequence is: ");
+    for (MorseTick tick : buffer) {
+      if (tick == DOT) {
+        DEBUGF(mbit, ".");
+      } else {
+        DEBUGF(mbit, "-");
+      }
+    }
+
+    DEBUG(mbit, "");
+  }
   // empty the buffer
   buffer.clear();
 
-  DEBUGF(mbit, "Sequence starting from value: ");
+  if (SHOULD_DEBUG) {
+    DEBUGF(mbit, "Sequence starting from value: ");
 
-  for (int i = value; i < morse::LEXICON_LENGTH; i++) {
-    DEBUGF(mbit, "%c", morse::LEXICON[i]);
+    for (int i = value; i < morse::LEXICON_LENGTH; i++) {
+      DEBUGF(mbit, "%c", morse::LEXICON[i]);
+    }
+    DEBUG(mbit, "");
   }
-  DEBUG(mbit, "");
 
   // TODO: check if the value is a special character
   if (morse::isValid(value)) {
@@ -162,21 +167,23 @@ void Sender::transmit() {
         morse::ESC, obfuscated_value, utils::parity(obfuscated_value), 0, 0, 0,
         0,          morse::EOW};
 
-#if SHOULD_DEBUG
-    DEBUGF(mbit, "char raw[] = {");
-    for (int i = 0; i < PACKET_SIZE; i++) {
-      DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
+    if (SHOULD_DEBUG) {
+      DEBUGF(mbit, "char raw[] = {");
+      for (int i = 0; i < PACKET_SIZE; i++) {
+        DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
+      }
+      DEBUG(mbit, "}");
     }
-    DEBUG(mbit, "}");
-#endif
 
     cipher->encrypt((uint32_t *)packet, 2);
 
-    DEBUGF(mbit, "char encrypted[] = {");
-    for (int i = 0; i < PACKET_SIZE; i++) {
-      DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
+    if (SHOULD_DEBUG) {
+      DEBUGF(mbit, "char encrypted[] = {");
+      for (int i = 0; i < PACKET_SIZE; i++) {
+        DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
+      }
+      DEBUG(mbit, "}");
     }
-    DEBUG(mbit, "}");
 
     writeHeader();
 
