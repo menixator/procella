@@ -9,7 +9,7 @@
 #include <vector>
 
 #define SENDER_IDLE 20
-
+#define BUFFER_MAX_SIZE 6
 #define PACKET_SIZE 8
 
 using namespace std;
@@ -38,6 +38,7 @@ private:
   void writeHeader();
   void writeBit(uint8_t bit);
   void writeByte(uint8_t byte);
+  void startTransmitting();
 
 public:
   Sender(MicroBit *mbit);
