@@ -28,6 +28,13 @@ bool isSpecial(uint8_t value) {
   };
 }
 
+bool isValid(uint8_t value) {
+  if (value > LEXICON_LENGTH) {
+    return false;
+  }
+  return !isSpecial(value) && LEXICON[value] != ESCAPE_CHAR;
+}
+
 // Converts an integer to a vector of booleans
 void itos(uint8_t value, vector<MorseTick> *encoded) {
   // If position is even, it's a dot

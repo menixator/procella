@@ -39,6 +39,8 @@ enum ControlSequences {
 // Determines whether or not a value is special
 
 bool isSpecial(uint8_t value);
+bool isValid(uint8_t value);
+
 // Converts an uint8_teger to a deque of booleans
 void itos(uint8_t value, vector<MorseTick> *encoded);
 
