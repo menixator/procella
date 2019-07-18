@@ -5,9 +5,13 @@ Receiver::Receiver(MicroBit *mbit) {
   this->cipher = new XXTEACipher(CIPHER_KEY, CIPHER_KEY_LENGTH);
   mbit->io.P1.eventOn(MICROBIT_PIN_EVENT_ON_PULSE);
   DEBUG(mbit, "Receiver has been initialized");
+  setupListeners();
 };
 
-Receiver::~Receiver() { delete cipher; };
+Receiver::~Receiver() {
+  tearDownListeners();
+  delete cipher;
+};
 
 void Receiver::setupListeners() {
   DEBUG(mbit, "Setting up listeners");
