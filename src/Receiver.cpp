@@ -36,8 +36,9 @@ void Receiver::writeBit(uint8_t bit) {
   if (bits_written >= 64) {
     return;
   };
-  buffer[bits_written / 64] <<= (bits_recieved - 3) % 8;
-  buffer[bits_written / 64] += (bit & 0x1);
+  uint8_t shift = (bits_recieved - 3) % 8;
+  buffer[bits_written / 8] <<=  shift;
+  buffer[bits_written / 8] += (bit & 0x1) << shift;
   bits_written++;
 
   if (bits_written >= 64) {
