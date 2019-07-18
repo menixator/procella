@@ -31,21 +31,27 @@ void Receiver::tearDownListeners() {
 };
 
 void Receiver::writeBit(uint8_t bit) {
-  // Refuse to write anything if we are reading the header.
-  if (bits_recieved <= 3) {
+
+  // If all 8bytes were written, ignore it.
+  if (bits_written >= 64 + 8) {
     return;
   };
 
-  // If all 8bytes were written, ignore it.
-  if (bits_written >= 64) {
-    return;
-  };
-  uint8_t shift = (bits_recieved - 3) % 8;
-  buffer[bits_written / 8] <<=  shift;
+  uint8_t shift = bits_recieved % 8;
+  buffer[bits_written / 8] <<= shift;
   buffer[bits_written / 8] += (bit & 0x1) << shift;
   bits_written++;
 
-  if (bits_written >= 64) {
+  // Check if header is over
+  if (++this->bits_recieved >= 8) {
+    if (buffer[0] != HEADER) {
+      reset();
+    } else {
+      mid_packet = true;
+    }
+  }
+
+  if (bits_written >= 64 + 8) {
     onPacket();
   }
 };
@@ -86,9 +92,8 @@ void Receiver::onPulseHigh(MicroBitEvent event) {
 }
 
 void Receiver::onPulseLow(MicroBitEvent event) {
-  if (!this->mid_packet) {
-    // A low pulse cannot start the listen.
-    DEBUG(mbit, "Got a LO to start the packet. Ignoring");
+
+  if (!mid_packet && bits_written == 0) {
     return;
   }
 
