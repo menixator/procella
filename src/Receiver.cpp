@@ -67,8 +67,9 @@ void Receiver::reset() {
 
 void Receiver::onPacket() {
   DEBUG(mbit, "Complete!");
+  cipher->decrypt((uint32_t *)(buffer + 8), 2);
   reset();
-}
+};
 
 void Receiver::onPulseHigh(MicroBitEvent event) {
   if (!this->mid_packet) {
