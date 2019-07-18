@@ -126,10 +126,8 @@ void Sender::writeByte(uint8_t byte) {
 
 void Sender::writeHeader() {
   writeBit(0);
-  writeBit(1);
-  writeBit(0);
-  writeBit(1);
-}
+  writeByte(HEADER);
+};
 
 void Sender::transmit() {
   mbit->display.clear();
