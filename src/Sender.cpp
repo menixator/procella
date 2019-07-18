@@ -172,14 +172,15 @@ void Sender::transmit() {
 
     DEBUG(mbit, "obfuscated value is: %d", obfuscated_value);
 
-    uint8_t packet[PACKET_SIZE] = {
+    uint8_t packet[PACKET_BODY_SIZE] = {
         morse::ESC, obfuscated_value, utils::parity(obfuscated_value), 0, 0, 0,
         0,          morse::EOW};
 
     if (SHOULD_DEBUG) {
       DEBUGF(mbit, "char raw[] = {");
-      for (int i = 0; i < PACKET_SIZE; i++) {
-        DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
+      for (int i = 0; i < PACKET_BODY_SIZE; i++) {
+        DEBUGF(mbit, "0x%02x %s", packet[i],
+               i == PACKET_BODY_SIZE - 1 ? "" : ", ");
       }
       DEBUG(mbit, "}");
     }
@@ -188,15 +189,16 @@ void Sender::transmit() {
 
     if (SHOULD_DEBUG) {
       DEBUGF(mbit, "char encrypted[] = {");
-      for (int i = 0; i < PACKET_SIZE; i++) {
-        DEBUGF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
+      for (int i = 0; i < PACKET_BODY_SIZE; i++) {
+        DEBUGF(mbit, "0x%02x %s", packet[i],
+               i == PACKET_BODY_SIZE - 1 ? "" : ", ");
       }
       DEBUG(mbit, "}");
     }
 
     writeHeader();
 
-    for (int i = 0; i < PACKET_SIZE; i++) {
+    for (int i = 0; i < PACKET_BODY_SIZE; i++) {
       writeByte(packet[i]);
     }
   }
