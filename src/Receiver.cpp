@@ -75,12 +75,6 @@ void Receiver::onPulseHigh(MicroBitEvent event) {
   if (!this->mid_packet) {
     // This means it's the header.
     DEBUG(mbit, "Got a HI! Packet is starting");
-
-    // Check if header is over
-    if (++this->bits_recieved >= 3) {
-      mid_packet = true;
-    }
-    return;
   }
 
   // We are in mid packet.
