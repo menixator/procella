@@ -35,6 +35,7 @@ typedef uint8_t MorseTick;
 #define PACKET_SIZE 9
 #define PACKET_BODY_SIZE 8
 #define BITS_TO_RECEIVE 67
+#define HEADER 0xAA
 
 #define CIPHER_KEY "TP@abbgW96NC@2?7"
 #define CIPHER_KEY_LENGTH 16
