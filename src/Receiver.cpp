@@ -15,18 +15,18 @@ Receiver::~Receiver() {
 
 void Receiver::setupListeners() {
   DEBUG(mbit, "Setting up listeners");
-  mbit->messageBus.listen(MICROBIT_ID_IO_P0, MICROBIT_PIN_EVT_PULSE_HI, this,
+  mbit->messageBus.listen(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_HI, this,
                           &Receiver::onPulseHigh,
                           MESSAGE_BUS_LISTENER_IMMEDIATE);
-  mbit->messageBus.listen(MICROBIT_ID_IO_P0, MICROBIT_PIN_EVT_PULSE_LO, this,
+  mbit->messageBus.listen(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_LO, this,
                           &Receiver::onPulseLow,
                           MESSAGE_BUS_LISTENER_IMMEDIATE);
 };
 
 void Receiver::tearDownListeners() {
-  mbit->messageBus.ignore(MICROBIT_ID_IO_P0, MICROBIT_PIN_EVT_PULSE_HI, this,
+  mbit->messageBus.ignore(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_HI, this,
                           &Receiver::onPulseHigh);
-  mbit->messageBus.ignore(MICROBIT_ID_IO_P0, MICROBIT_PIN_EVT_PULSE_LO, this,
+  mbit->messageBus.ignore(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_LO, this,
                           &Receiver::onPulseLow);
 };
 
