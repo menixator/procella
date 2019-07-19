@@ -33,7 +33,7 @@ void Receiver::tearDownListeners() {
 void Receiver::writeBit(uint8_t bit) {
 
   // If all 8bytes were written, ignore it.
-  if (bits_written >= 64 + 8) {
+  if (bits_written >= 64 + 8 + 8) {
     return;
   };
 
@@ -42,23 +42,19 @@ void Receiver::writeBit(uint8_t bit) {
   bits_written++;
 
   // Check if header is over
-  if (this->bits_recieved >= 8) {
+  if (this->bits_written >= 8) {
     if (buffer[0] != HEADER) {
       reset();
-    } else {
-      mid_packet = true;
     }
   }
 
-  if (bits_written >= 64 + 8) {
+  if (bits_written >= 64 + 8 + 8) {
     onPacket();
   }
 };
 
 void Receiver::reset() {
-  bits_recieved = 0;
   bits_written = 0;
-  mid_packet = 0;
   last_hi_tick = 0;
   // Reset the buffer
   std::memset(buffer, 0, sizeof(buffer));
@@ -66,20 +62,38 @@ void Receiver::reset() {
 
 void Receiver::onPacket() {
   DEBUG(mbit, "Complete!");
-  cipher->decrypt((uint32_t *)(buffer + 8), 2);
+  if (SHOULD_DEBUG) {
+    DEBUGF(mbit, "char raw[] = {");
+    for (int i = 0; i < PACKET_SIZE; i++) {
+      DEBUGF(mbit, "0x%02x, ", buffer[i]);
+    }
+    DEBUG(mbit, "}");
+  }
+  // So apparently, when you call a class method, the member data becomes
+  // unavailable? Really frustrating . . . .
+  uint8_t encrypted_data[8] = {0};
+  std::memcpy(encrypted_data, buffer + 1, 8);
+
+  cipher->decrypt((uint32_t *)encrypted_data, 2);
+
+  if (SHOULD_DEBUG) {
+    DEBUGF(mbit, "decrypted raw[] = {");
+    for (int i = 0; i < PACKET_BODY_SIZE; i++) {
+      DEBUGF(mbit, "0x%02x, ", encrypted_data[i]);
+    }
+    DEBUG(mbit, "}");
+  }
+
   reset();
 };
 
 void Receiver::onPulseHigh(MicroBitEvent event) {
-  if (!this->mid_packet) {
-    // This means it's the header.
-    DEBUG(mbit, "Got a HI! Packet is starting");
-  }
 
   // We are in mid packet.
   // TODO: repetitions can overflow
   uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
-  DEBUG(mbit, "Got a HI with %d repetitions", repetitions);
+  DEBUG(mbit, "Got a HI with %d repetitions, bits written: %d", repetitions,
+        bits_written);
   for (uint8_t i = 0; i < repetitions; i++) {
     writeBit(1);
   }
@@ -87,14 +101,15 @@ void Receiver::onPulseHigh(MicroBitEvent event) {
 
 void Receiver::onPulseLow(MicroBitEvent event) {
 
-  if (!mid_packet && bits_written == 0) {
+  if (bits_written == 0) {
     return;
   }
 
   // We are in mid packet.
   // TODO: repetitions can overflow
   uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
-  DEBUG(mbit, "Got a LO with %d repetitions", repetitions);
+  DEBUG(mbit, "Got a LO with %d repetitions, bits written: %d", repetitions,
+        bits_written);
   for (uint8_t i = 0; i < repetitions; i++) {
     writeBit(0);
   }
@@ -102,6 +117,6 @@ void Receiver::onPulseLow(MicroBitEvent event) {
 
 void Receiver::start() {
   while (1) {
-    mbit->sleep(100);
+    mbit->sleep(20);
   }
 }

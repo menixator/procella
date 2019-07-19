@@ -5,9 +5,7 @@
 
 class Receiver {
 private:
-  uint8_t bits_recieved = 0;
   uint8_t bits_written = 0;
-  bool mid_packet = 0;
 
   // Last hi tick is used to invalidate the data
   uint64_t last_hi_tick = 0;
