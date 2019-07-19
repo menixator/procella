@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 
 #include "MicroBit.h"
+#include "Receiver.hpp"
 #include "Sender.hpp"
 #include "common.hpp"
 #include "morse.hpp"

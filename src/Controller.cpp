@@ -59,6 +59,11 @@ void Controller::start() {
     Sender *sender = new Sender(mbit);
     DEBUG(mbit, "Sender has been intialized");
     sender->start();
+  } else if (role == Beta) {
+    DEBUG(mbit, "Initialized as a reciever!");
+    Receiver *reciever = new Receiver(mbit);
+    DEBUG(mbit, "Reciever has been intialized");
+    reciever->start();
   }
   // TODO: either read or write.
   while (true) {
