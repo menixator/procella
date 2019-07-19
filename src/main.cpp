@@ -5,9 +5,9 @@
 // Initialize the wrapper
 int main() {
 
-  Controller controller;
+  Controller *controller = new Controller();
 
-  controller.start();
+  controller->start();
 
   release_fiber();
 };
