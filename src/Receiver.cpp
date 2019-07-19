@@ -43,7 +43,7 @@ void Receiver::writeBit(uint8_t bit) {
   bits_written++;
 
   // Check if header is over
-  if (++this->bits_recieved >= 8) {
+  if (this->bits_recieved >= 8) {
     if (buffer[0] != HEADER) {
       reset();
     } else {
