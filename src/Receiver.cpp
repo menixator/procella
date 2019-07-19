@@ -37,9 +37,8 @@ void Receiver::writeBit(uint8_t bit) {
     return;
   };
 
-  uint8_t shift = bits_recieved % 8;
-  buffer[bits_written / 8] <<= shift;
-  buffer[bits_written / 8] += (bit & 0x1) << shift;
+  buffer[bits_written / 8] <<= 1;
+  buffer[bits_written / 8] += (bit & 0x1);
   bits_written++;
 
   // Check if header is over
