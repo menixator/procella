@@ -78,7 +78,7 @@ void Receiver::onPulseHigh(MicroBitEvent event) {
 
   // We are in mid packet.
   // TODO: repetitions can overflow
-  uint8_t repetitions = event.timestamp / TX_SLEEP;
+  uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
   DEBUG(mbit, "Got a HI with %d repetitions", repetitions);
   for (uint8_t i = 0; i < repetitions; i++) {
     writeBit(1);
@@ -93,7 +93,7 @@ void Receiver::onPulseLow(MicroBitEvent event) {
 
   // We are in mid packet.
   // TODO: repetitions can overflow
-  uint8_t repetitions = event.timestamp / TX_SLEEP;
+  uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
   DEBUG(mbit, "Got a LO with %d repetitions", repetitions);
   for (uint8_t i = 0; i < repetitions; i++) {
     writeBit(0);
