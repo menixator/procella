@@ -66,19 +66,19 @@ uint8_t stoi(vector<MorseTick> *encoded) {
 
 // Obfuscates the value by shifting the value to the right in the lexicon
 uint8_t obfuscate(uint8_t value, uint8_t delta) {
-  value += delta;
-  value %= LEXICON_LENGTH;
-  return value;
+  int ivalue = value + delta;
+  ivalue %= LEXICON_LENGTH;
+  return ivalue;
 }
 
 uint8_t deobfuscate(uint8_t value, uint8_t delta) {
-  value -= delta;
+  int ivalue = value - delta;
   // If the value is negative, then convert it to a positive integer, and fit it
   // into the range 0-LEXICON_LENGTH
-  if (value < 0) {
-    value = LEXICON_LENGTH - ((-1 * value) % LEXICON_LENGTH);
+  if (ivalue < 0) {
+    ivalue = LEXICON_LENGTH - ((-1 * ivalue) % LEXICON_LENGTH);
   }
-  return value % LEXICON_LENGTH;
+  return ivalue % LEXICON_LENGTH;
 }
 
 } // namespace morse
