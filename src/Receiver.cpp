@@ -40,7 +40,7 @@ void Receiver::writeBit(uint8_t bit) {
   buffer[bitsWritten / 8] <<= 1;
   buffer[bitsWritten / 8] += (bit & 0x1);
   bitsWritten++;
-  lastActivity = system_timer_current_time();
+  lastActivity = mbit->systemTime();
 
   // Check if header is over
   if (this->bitsWritten >= 8) {
@@ -90,7 +90,7 @@ void Receiver::onPacket() {
       encrypted_data[PACKET_BODY_SIZE - 1] != morse::EOW) {
     DEBUG(mbit, "basic checks failed on the packet!");
     mbit->display.printAsync(CROSS_IMAGE);
-    lastScreenActivity = system_timer_current_time();
+    lastScreenActivity = mbit->systemTime();
   } else {
     uint8_t parity = encrypted_data[2];
     uint8_t obfuscated = encrypted_data[1];
@@ -98,11 +98,11 @@ void Receiver::onPacket() {
     if (utils::parity(obfuscated) != parity) {
       DEBUG(mbit, "parity check failed");
       mbit->display.printAsync(CROSS_IMAGE);
-      lastScreenActivity = system_timer_current_time();
+      lastScreenActivity = mbit->systemTime();
     } else {
       DEBUG(mbit, "success: character is %c", morse::LEXICON[deobfuscated]);
       mbit->display.printAsync(morse::LEXICON[deobfuscated]);
-      lastScreenActivity = system_timer_current_time();
+      lastScreenActivity = mbit->systemTime();
     }
   }
 
