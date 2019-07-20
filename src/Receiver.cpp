@@ -33,29 +33,29 @@ void Receiver::tearDownListeners() {
 void Receiver::writeBit(uint8_t bit) {
 
   // If all 8bytes were written, ignore it.
-  if (bits_written >= 64 + 8 + 8) {
+  if (bitsWritten >= 64 + 8 + 8) {
     return;
   };
 
-  buffer[bits_written / 8] <<= 1;
-  buffer[bits_written / 8] += (bit & 0x1);
-  bits_written++;
+  buffer[bitsWritten / 8] <<= 1;
+  buffer[bitsWritten / 8] += (bit & 0x1);
+  bitsWritten++;
   lastActivity = system_timer_current_time();
 
   // Check if header is over
-  if (this->bits_written >= 8) {
+  if (this->bitsWritten >= 8) {
     if (buffer[0] != HEADER) {
       reset();
     }
   }
 
-  if (bits_written >= 64 + 8 + 8) {
+  if (bitsWritten >= 64 + 8 + 8) {
     onPacket();
   }
 };
 
 void Receiver::reset() {
-  bits_written = 0;
+  bitsWritten = 0;
   lastActivity = 0;
   // Reset the buffer
   std::memset(buffer, 0, sizeof(buffer));
@@ -115,7 +115,7 @@ void Receiver::onPulseHigh(MicroBitEvent event) {
   // TODO: repetitions can overflow
   uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
   DEBUG(mbit, "Got a HI with %d repetitions, bits written: %d", repetitions,
-        bits_written);
+        bitsWritten);
   for (uint8_t i = 0; i < repetitions; i++) {
     writeBit(1);
   }
@@ -123,7 +123,7 @@ void Receiver::onPulseHigh(MicroBitEvent event) {
 
 void Receiver::onPulseLow(MicroBitEvent event) {
 
-  if (bits_written == 0) {
+  if (bitsWritten == 0) {
     return;
   }
 
@@ -131,7 +131,7 @@ void Receiver::onPulseLow(MicroBitEvent event) {
   // TODO: repetitions can overflow
   uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
   DEBUG(mbit, "Got a LO with %d repetitions, bits written: %d", repetitions,
-        bits_written);
+        bitsWritten);
   for (uint8_t i = 0; i < repetitions; i++) {
     writeBit(0);
   }
