@@ -40,6 +40,7 @@ void Receiver::writeBit(uint8_t bit) {
   buffer[bits_written / 8] <<= 1;
   buffer[bits_written / 8] += (bit & 0x1);
   bits_written++;
+  lastActivity = system_timer_current_time();
 
   // Check if header is over
   if (this->bits_written >= 8) {
@@ -55,7 +56,7 @@ void Receiver::writeBit(uint8_t bit) {
 
 void Receiver::reset() {
   bits_written = 0;
-  last_hi_tick = 0;
+  lastActivity = 0;
   // Reset the buffer
   std::memset(buffer, 0, sizeof(buffer));
 }
@@ -91,7 +92,7 @@ void Receiver::onPacket() {
   } else {
     uint8_t parity = encrypted_data[2];
     uint8_t deobfuscated = morse::deobfuscate(encrypted_data[1], CEASER_SHIFT);
-    mbit->display.print(morse::LEXICON[deobfuscated]);
+    mbit->display.scrollAsync(morse::LEXICON[deobfuscated]);
     // TODO: verify parity
   }
 
