@@ -23,7 +23,10 @@ void Controller::onRoleDecided(Role newRole) {
   role = newRole;
 }
 
-Controller::Controller() { setupListeners(); };
+Controller::Controller() {
+  mbit->init();
+  setupListeners();
+};
 
 void Controller::setupListeners() {
   mbit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_CLICK, this,
