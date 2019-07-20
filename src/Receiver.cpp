@@ -63,7 +63,7 @@ void Receiver::reset() {
 void Receiver::onPacket() {
   DEBUG(mbit, "Complete!");
   if (SHOULD_DEBUG) {
-    DEBUGF(mbit, "char raw[] = {");
+    DEBUGF(mbit, "char encrypted[] = {");
     for (int i = 0; i < PACKET_SIZE; i++) {
       DEBUGF(mbit, "0x%02x, ", buffer[i]);
     }
@@ -77,11 +77,22 @@ void Receiver::onPacket() {
   cipher->decrypt((uint32_t *)encrypted_data, 2);
 
   if (SHOULD_DEBUG) {
-    DEBUGF(mbit, "decrypted raw[] = {");
+    DEBUGF(mbit, "char decrypted[] = {");
     for (int i = 0; i < PACKET_BODY_SIZE; i++) {
       DEBUGF(mbit, "0x%02x, ", encrypted_data[i]);
     }
     DEBUG(mbit, "}");
+  }
+
+  if (buffer[0] != HEADER || buffer[PACKET_SIZE - 1] != HEADER ||
+      encrypted_data[0] != morse::ESC ||
+      encrypted_data[PACKET_BODY_SIZE - 1] != morse::EOW) {
+    // TODO: fail
+  } else {
+    uint8_t parity = encrypted_data[2];
+    uint8_t deobfuscated = morse::deobfuscate(encrypted_data[1], CEASER_SHIFT);
+    mbit->display.print(morse::LEXICON[deobfuscated]);
+    // TODO: verify parity
   }
 
   reset();
