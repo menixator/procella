@@ -175,9 +175,19 @@ void Sender::transmit() {
 
     DEBUG(mbit, "obfuscated value is: %d", obfuscated_value);
 
-    uint8_t packet[PACKET_BODY_SIZE] = {
-        morse::ESC, obfuscated_value, utils::parity(obfuscated_value), 0, 0, 0,
-        0,          morse::EOW};
+    // seed the RNG
+    mbit->seedRandom();
+    // Generate a 32 bit random number to fill the empty bytes
+    int padding = mbit->random(0x7FFFFFFF);
+
+    uint8_t packet[PACKET_BODY_SIZE] = {morse::ESC,
+                                        obfuscated_value,
+                                        utils::parity(obfuscated_value),
+                                        (uint8_t)(padding & 0xFF),
+                                        (uint8_t)((padding >> 8) & 0xFF),
+                                        (uint8_t)((padding >> 16) & 0xFF),
+                                        (uint8_t)((padding >> 24) & 0xFF),
+                                        morse::EOW};
 
     if (SHOULD_DEBUG) {
       DEBUGF(mbit, "char raw[] = {");
