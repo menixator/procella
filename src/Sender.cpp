@@ -77,6 +77,7 @@ void Sender::onButtonAUp(MicroBitEvent event) {
 };
 
 void Sender::onButtonBPress(MicroBitEvent event) {
+  (void)event;
   DEBUG(mbit, "Button B is up!");
   startTransmitting();
 };
