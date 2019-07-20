@@ -2,6 +2,7 @@
 #define RECEIVER_H
 #include "XXTEACipher.hpp"
 #include "common.hpp"
+#include "morse.hpp"
 
 class Receiver {
 private:
