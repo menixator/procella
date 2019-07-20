@@ -12,30 +12,8 @@ XXTEACipher::XXTEACipher(const char *key_arr, int length) {
 
 // Converts a character array to a sequence of words and saves it as the key
 void XXTEACipher::write_key(const char *key_arr, const int length) {
-  // Add it to the key
-
-  // Index to write to next
-  short int to_write = 0;
-  uint32_t word_buffer = 0;
-
-  // Assures that all 4 key entries are written to.
-  for (int index = 0; index < XXTEA_KEYSIZE; index++) {
-    // A char is 8 bits.
-    // The buffer needs to be filled 4 times to make up a 32 bit key
-    if ((index + 1) % 4 == 0) {
-      // Every 4th iteration, copy the buffer over
-      key[to_write] = word_buffer;
-      word_buffer = 0;
-      to_write++;
-    } else {
-      // shift left a byte
-      word_buffer <<= 8;
-      if (index < length) {
-        word_buffer += (uint32_t)key_arr[index];
-      }
-    }
-  }
-}
+  std::memcpy(key, key_arr, length);
+};
 
 // Encrypts an arbitrary number of uint32_t chunks
 void XXTEACipher::encrypt(uint32_t *data, const unsigned int length) {
