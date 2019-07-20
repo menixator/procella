@@ -93,8 +93,9 @@ void Receiver::onPacket() {
     lastScreenActivity = system_timer_current_time();
   } else {
     uint8_t parity = encrypted_data[2];
-    uint8_t deobfuscated = morse::deobfuscate(encrypted_data[1], CEASER_SHIFT);
-    if (utils::parity(encrypted_data[1]) != parity) {
+    uint8_t obfuscated = encrypted_data[1];
+    uint8_t deobfuscated = morse::deobfuscate(obfuscated, CEASER_SHIFT);
+    if (utils::parity(obfuscated) != parity) {
       DEBUG(mbit, "parity check failed");
       mbit->display.printAsync(CROSS_IMAGE);
       lastScreenActivity = system_timer_current_time();
