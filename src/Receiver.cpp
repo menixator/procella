@@ -88,12 +88,21 @@ void Receiver::onPacket() {
   if (buffer[0] != HEADER || buffer[PACKET_SIZE - 1] != HEADER ||
       encrypted_data[0] != morse::ESC ||
       encrypted_data[PACKET_BODY_SIZE - 1] != morse::EOW) {
-    // TODO: fail
+    DEBUG(mbit, "basic checks failed on the packet!");
+    mbit->display.printAsync(CROSS_IMAGE);
+    lastScreenActivity = system_timer_current_time();
   } else {
     uint8_t parity = encrypted_data[2];
     uint8_t deobfuscated = morse::deobfuscate(encrypted_data[1], CEASER_SHIFT);
-    mbit->display.scrollAsync(morse::LEXICON[deobfuscated]);
-    // TODO: verify parity
+    if (utils::parity(encrypted_data[1]) != parity) {
+      DEBUG(mbit, "parity check failed");
+      mbit->display.printAsync(CROSS_IMAGE);
+      lastScreenActivity = system_timer_current_time();
+    } else {
+      DEBUG(mbit, "success: character is %c", morse::LEXICON[deobfuscated]);
+      mbit->display.printAsync(morse::LEXICON[deobfuscated]);
+      lastScreenActivity = system_timer_current_time();
+    }
   }
 
   reset();
@@ -130,5 +139,9 @@ void Receiver::onPulseLow(MicroBitEvent event) {
 void Receiver::start() {
   while (1) {
     mbit->sleep(20);
+    if (lastScreenActivity > 0 &&
+        mbit->systemTime() - lastScreenActivity > 1000) {
+      mbit->display.clear();
+    }
   }
 }

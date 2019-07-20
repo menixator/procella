@@ -3,6 +3,7 @@
 #include "XXTEACipher.hpp"
 #include "common.hpp"
 #include "morse.hpp"
+#include "utils.hpp"
 
 class Receiver {
 private:
@@ -10,6 +11,7 @@ private:
 
   // Last hi tick is used to invalidate the data
   uint64_t lastActivity = 0;
+  uint64_t lastScreenActivity = 0;
 
   // The pointer to the microbit
   MicroBit *mbit;
