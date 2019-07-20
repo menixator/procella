@@ -103,21 +103,19 @@ void Sender::start() {
 };
 
 void Sender::writeBit(uint8_t bit) {
-  // Interesingly, when I call sleep, the microbit doesn't really make the
-  // current fiber, which is the main fiber, sleep at all. Sometimes, it returns
-  // as early as 9ms when it should have slept for at least 50ms. So this filthy
-  // hack had to be included.
+#if SHOULD_DEBUG
   static uint64_t last_call = 0;
   if (last_call > 0) {
-    uint64_t diff = system_timer_current_time() - last_call;
+    uint64_t diff = mbit->systemTime() - last_call;
     if (diff < TX_SLEEP) {
       DEBUG(mbit, "diff is: %d milliseconds", diff);
-      while (system_timer_current_time() - last_call < TX_SLEEP) {
+      while (mbit->systemTime() - last_call < TX_SLEEP) {
         mbit->sleep(10);
       }
     }
   }
-  last_call = system_timer_current_time();
+  last_call = mbit->systemTime();
+#endif
 
   mbit->io.P0.setDigitalValue(bit > 0);
   mbit->sleep(TX_SLEEP);
