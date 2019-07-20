@@ -110,7 +110,7 @@ void Sender::writeBit(uint8_t bit) {
   static uint64_t last_call = 0;
   if (last_call > 0) {
     uint64_t diff = system_timer_current_time() - last_call;
-    if (diff > TX_SLEEP || diff < TX_SLEEP) {
+    if (diff < TX_SLEEP) {
       DEBUG(mbit, "diff is: %d milliseconds", diff);
       while (system_timer_current_time() - last_call < TX_SLEEP) {
         mbit->sleep(10);
