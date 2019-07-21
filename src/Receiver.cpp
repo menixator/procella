@@ -33,23 +33,23 @@ void Receiver::tearDownListeners() {
 void Receiver::onBit(uint8_t bit) {
 
   // If all 8bytes were written, ignore it.
-  if (bitsRead >= 64 + 8 + 8) {
+  if (bitsRead >= PACKET_SIZE * BITS_PER_BYTE) {
     return;
   };
 
-  buffer[bitsRead / 8] <<= 1;
-  buffer[bitsRead / 8] += (bit & 0x1);
+  buffer[bitsRead / BITS_PER_BYTE] <<= 1;
+  buffer[bitsRead / BITS_PER_BYTE] += (bit & 0x1);
   bitsRead++;
   lastActivity = mbit->systemTime();
 
   // Check if header is over
-  if (this->bitsRead >= 8) {
+  if (this->bitsRead >= BITS_PER_BYTE) {
     if (buffer[0] != MARKER_BYTE) {
       reset();
     }
   }
 
-  if (bitsRead >= 64 + 8 + 8) {
+  if (bitsRead >= PACKET_SIZE * BITS_PER_BYTE) {
     onPacket();
   }
 };
