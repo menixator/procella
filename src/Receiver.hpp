@@ -7,7 +7,7 @@
 
 class Receiver {
 private:
-  uint8_t bitsWritten = 0;
+  uint8_t bitsRead = 0;
 
   // Last hi tick is used to invalidate the data
   uint64_t lastActivity = 0;
