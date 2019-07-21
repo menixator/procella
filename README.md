@@ -56,6 +56,59 @@ indicating that the data is being transmitted.  After ~2 seconds(the details
 about the time will be discussed further below) the Receiver will display the
 transmitted character on the LED display.
 
+The supported characters are as follows:
+```
+a  .-
+b  -...
+c  -.-.
+d  -..
+e  .
+f  ..-.
+g  --.
+h  ....
+i  ..
+j  .---
+k  -.-
+l  .-..
+m  --
+n  -.
+o  ---
+p  .--.
+q  --.-
+r  .-.
+s  ...
+t  -
+u  ..-
+v  ...-
+w  .--
+x  -..-
+y  -.--
+z  --..
+0  -----
+1  .----
+2  ..---
+3  ...--
+4  ....-
+5  .....
+6  -....
+7  --...
+8  ---..
+9  ----.
+.   .-.-.-
+,   --..--
+:   ---...
+?   ..--..
+'   .----.
+-   -....-
+/   -..-.
+(   -.--.
+)   -.--.-
+"   .-..-.
+=   -...-
++   .-.-.
+! ..--
+```
+
 
 ## Internal Workings
 The internal buffer of the Sender can hold a limited amount of dits/dahs. This
