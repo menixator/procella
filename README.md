@@ -8,8 +8,8 @@ These instructions will get you a copy of the project up and running.
 
 ### Prerequisites
 
-1. (Yotta)[http://docs.yottabuild.org/#installing]
-2. (Git)[https://git-scm.com/]  (Only if you are cloning the repository)
+1. [Yotta](http://docs.yottabuild.org/#installing)
+2. [Git](https://git-scm.com/)  (Only if you are cloning the repository)
 
 
 ### Building
