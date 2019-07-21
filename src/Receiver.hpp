@@ -29,7 +29,7 @@ private:
   void onPulseHigh(MicroBitEvent event);
   void onPulseLow(MicroBitEvent event);
 
-  void writeBit(uint8_t bit);
+  void onBit(uint8_t bit);
   void onPacket();
   void reset();
 

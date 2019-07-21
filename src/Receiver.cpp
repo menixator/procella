@@ -30,7 +30,7 @@ void Receiver::tearDownListeners() {
                           &Receiver::onPulseLow);
 };
 
-void Receiver::writeBit(uint8_t bit) {
+void Receiver::onBit(uint8_t bit) {
 
   // If all 8bytes were written, ignore it.
   if (bitsRead >= 64 + 8 + 8) {
@@ -117,7 +117,7 @@ void Receiver::onPulseHigh(MicroBitEvent event) {
   DEBUG(mbit, "Got a HI with %d repetitions, bits written: %d", repetitions,
         bitsRead);
   for (uint8_t i = 0; i < repetitions; i++) {
-    writeBit(1);
+    onBit(1);
   }
 }
 
@@ -133,7 +133,7 @@ void Receiver::onPulseLow(MicroBitEvent event) {
   DEBUG(mbit, "Got a LO with %d repetitions, bits written: %d", repetitions,
         bitsRead);
   for (uint8_t i = 0; i < repetitions; i++) {
-    writeBit(0);
+    onBit(0);
   }
 }
 
