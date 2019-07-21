@@ -39,17 +39,37 @@ typedef uint8_t MorseTick;
 #define CIPHER_KEY "TP@abbgW96NC@2?7"
 #define CIPHER_KEY_LENGTH 16
 
-#define ARROW_TIP 0, 0, 255, 0, 0, 0, 255, 0, 255, 0, 0, 0, 0, 0, 0
-#define ARROW_BODY 0, 255, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0
-#define ARROW_TAIL 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 0, 255, 0, 255, 0
+#define ARROW_HEAD 0, 0, 255, 0, 0
+#define ARROW_BODY 0, 255, 0, 255, 0
+#define ARROW_TAIL 0, 0, 0, 0, 0
 
+// clang-format off
 const uint8_t TX_ANIM_DATA[] __attribute__((aligned(4))) = {
-    0xff,      0xff,       15,         0,         5,         0,
-    ARROW_TIP, ARROW_BODY, ARROW_TAIL, ARROW_TIP, ARROW_BODY};
+  0xff, 0xff,
+  // Width, followed by the mandatory 0
+  25, 0,
+  // Height, followed by the mandatory 0
+  5, 0,
+  ARROW_TAIL,  ARROW_TAIL, ARROW_HEAD, ARROW_BODY, ARROW_TAIL,
+  ARROW_TAIL,  ARROW_HEAD, ARROW_BODY, ARROW_TAIL, ARROW_TAIL,
+  ARROW_HEAD,  ARROW_BODY, ARROW_TAIL, ARROW_TAIL, ARROW_HEAD,
+  ARROW_BODY,  ARROW_TAIL, ARROW_TAIL, ARROW_TAIL, ARROW_BODY,
+  ARROW_TAIL,  ARROW_TAIL, ARROW_TAIL, ARROW_HEAD, ARROW_TAIL,
+};
 
 const uint8_t RX_ANIM_DATA[] __attribute__((aligned(4))) = {
-    0xff,       0xff,      15,         0,          5,        0,
-    ARROW_BODY, ARROW_TIP, ARROW_TAIL, ARROW_BODY, ARROW_TIP};
+  0xff, 0xff,
+  // Width, followed by the mandatory 0
+  25, 0,
+  // Height, followed by the mandatory 0
+  5, 0,
+  ARROW_TAIL,  ARROW_TAIL, ARROW_TAIL, ARROW_HEAD, ARROW_TAIL,
+  ARROW_BODY,  ARROW_TAIL, ARROW_TAIL, ARROW_TAIL, ARROW_BODY,
+  ARROW_HEAD,  ARROW_BODY, ARROW_TAIL, ARROW_TAIL, ARROW_HEAD,
+  ARROW_TAIL,  ARROW_HEAD, ARROW_BODY, ARROW_TAIL, ARROW_TAIL,
+  ARROW_TAIL,  ARROW_TAIL, ARROW_HEAD, ARROW_BODY, ARROW_TAIL,
+};
+// clang-format on
 
 const MicroBitImage CROSS_IMAGE("0,255,0\n255,255,255\n0,255,0\n");
 const MicroBitImage
