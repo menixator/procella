@@ -141,29 +141,29 @@ void Sender::transmit() {
 
   DEBUG(mbit, "value is: %d", value);
 
-  if (SHOULD_DEBUG) {
-    DEBUGF(mbit, "The sequence is: ");
-    for (MorseTick tick : buffer) {
-      if (tick == DOT) {
-        DEBUGF(mbit, ".");
-      } else {
-        DEBUGF(mbit, "-");
-      }
+#if SHOULD_DEBUG
+  DEBUGF(mbit, "The sequence is: ");
+  for (MorseTick tick : buffer) {
+    if (tick == DOT) {
+      DEBUGF(mbit, ".");
+    } else {
+      DEBUGF(mbit, "-");
     }
-
-    DEBUG(mbit, "");
   }
+
+  DEBUG(mbit, "");
+#endif
   // empty the buffer
   buffer.clear();
 
-  if (SHOULD_DEBUG) {
-    DEBUGF(mbit, "Sequence starting from value: ");
+#if SHOULD_DEBUG
+  DEBUGF(mbit, "Sequence starting from value: ");
 
-    for (int i = value; i < morse::LEXICON_LENGTH; i++) {
-      DEBUGF(mbit, "%c", morse::LEXICON[i]);
-    }
-    DEBUG(mbit, "");
+  for (int i = value; i < morse::LEXICON_LENGTH; i++) {
+    DEBUGF(mbit, "%c", morse::LEXICON[i]);
   }
+  DEBUG(mbit, "");
+#endif
 
   // TODO: check if the value is a special character
   if (morse::isValid(value)) {
@@ -188,25 +188,25 @@ void Sender::transmit() {
                                         (uint8_t)((padding >> 24) & 0xFF),
                                         morse::EOW};
 
-    if (SHOULD_DEBUG) {
-      DEBUGF(mbit, "char raw[] = {");
-      for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-        DEBUGF(mbit, "0x%02x %s", packet[i],
-               i == PACKET_BODY_SIZE - 1 ? "" : ", ");
-      }
-      DEBUG(mbit, "}");
+#if SHOULD_DEBUG
+    DEBUGF(mbit, "char raw[] = {");
+    for (int i = 0; i < PACKET_BODY_SIZE; i++) {
+      DEBUGF(mbit, "0x%02x %s", packet[i],
+             i == PACKET_BODY_SIZE - 1 ? "" : ", ");
     }
+    DEBUG(mbit, "}");
+#endif
 
     cipher->encrypt((uint32_t *)packet, 2);
 
-    if (SHOULD_DEBUG) {
-      DEBUGF(mbit, "char encrypted[] = {");
-      for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-        DEBUGF(mbit, "0x%02x %s", packet[i],
-               i == PACKET_BODY_SIZE - 1 ? "" : ", ");
-      }
-      DEBUG(mbit, "}");
+#if SHOULD_DEBUG
+    DEBUGF(mbit, "char encrypted[] = {");
+    for (int i = 0; i < PACKET_BODY_SIZE; i++) {
+      DEBUGF(mbit, "0x%02x %s", packet[i],
+             i == PACKET_BODY_SIZE - 1 ? "" : ", ");
     }
+    DEBUG(mbit, "}");
+#endif
 
     writeMarker();
 
