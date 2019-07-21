@@ -128,7 +128,7 @@ access to a microbit running the program and reading the output on the other end
 of the GPIO pin.
 
 If these random bytes were not filled, the values in those positions will always
-be an unchanging value, lets assume 0. Therefore, the packet for A will always
+be an unchanging value, let's assume 0. Therefore, the packet for A will always
 be the same(even after encryption) no matter how many times you send it. The
 attacker can use this information to map out all the possible outputs on the
 gpio pin for all the combinations and essentially create a device that can talk
