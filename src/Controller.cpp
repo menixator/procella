@@ -68,8 +68,4 @@ void Controller::start() {
     DEBUG(mbit, "Reciever has been intialized");
     reciever->start();
   }
-  // TODO: either read or write.
-  while (true) {
-    mbit->sleep(100);
-  }
 };
