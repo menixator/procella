@@ -71,7 +71,7 @@ const uint8_t RX_ANIM_DATA[] __attribute__((aligned(4))) = {
 };
 // clang-format on
 
-const MicroBitImage CROSS_IMAGE("0,255,0\n255,255,255\n0,255,0\n");
+const MicroBitImage CROSS_IMAGE("255,0,255\n0,255,0\n255,0,255\n");
 const MicroBitImage
     DOT_IMAGE("0,0,0,0,0\n 0,0,0,0,0\n 0,0,255,0,0\n 0,0,0,0,0\n 0,0,0,0,0\n");
 const MicroBitImage DASH_IMAGE(
