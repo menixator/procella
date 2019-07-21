@@ -44,7 +44,7 @@ void Receiver::writeBit(uint8_t bit) {
 
   // Check if header is over
   if (this->bitsWritten >= 8) {
-    if (buffer[0] != HEADER) {
+    if (buffer[0] != MARKER_BYTE) {
       reset();
     }
   }
@@ -85,7 +85,7 @@ void Receiver::onPacket() {
     DEBUG(mbit, "}");
   }
 
-  if (buffer[0] != HEADER || buffer[PACKET_SIZE - 1] != HEADER ||
+  if (buffer[0] != MARKER_BYTE || buffer[PACKET_SIZE - 1] != MARKER_BYTE ||
       encrypted_data[0] != morse::ESC ||
       encrypted_data[PACKET_BODY_SIZE - 1] != morse::EOW) {
     DEBUG(mbit, "basic checks failed on the packet!");

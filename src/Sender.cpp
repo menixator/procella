@@ -128,9 +128,9 @@ void Sender::writeByte(uint8_t byte) {
   }
 };
 
-void Sender::writeHeader() {
+void Sender::writeMarker() {
   writeBit(0);
-  writeByte(HEADER);
+  writeByte(MARKER_BYTE);
 };
 
 void Sender::transmit() {
@@ -208,13 +208,13 @@ void Sender::transmit() {
       DEBUG(mbit, "}");
     }
 
-    writeHeader();
+    writeMarker();
 
     for (int i = 0; i < PACKET_BODY_SIZE; i++) {
       writeByte(packet[i]);
     }
 
-    writeByte(HEADER);
+    writeByte(MARKER_BYTE);
 
     mbit->io.P0.setDigitalValue(0);
   }

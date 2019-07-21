@@ -32,7 +32,10 @@ private:
   void tearDownListeners();
 
   void transmit();
-  void writeHeader();
+
+  /**
+   */
+  void writeMarker();
   void writeBit(uint8_t bit);
   void writeByte(uint8_t byte);
   void startTransmitting();
