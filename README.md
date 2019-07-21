@@ -31,7 +31,7 @@ cp build/bbc-microbit-classic-gcc/src/*-combined.hex /run/media/$USERNAME/MICROB
 
 ### Running
 
-When the the microbit starts up:
+When the microbit starts up:
 
 - On the Sender, press the Button A
 - On the Receiver, press the Button B
@@ -59,16 +59,16 @@ transmitted character on the LED display.
 
 ## Internal Workings
 The internal buffer of the Sender can hold a limited amount of dits/dahs. This
-is to make sure that the value being trasmitted fits into a single byte(less
+is to make sure that the value being transmitted fits into a single byte(less
 than 256).  If the internal buffer is on the verge going over the limit, the
 Sender will initiate a transmission forcefully.  To convert the morse code
 signal to an integer value, a binary tree representation of the morse code
 alphabet is used.
 
-[This](https://upload.wikimedia.org/wikipedia/commons/c/ca/Morse_code_tree3.png) is the binary tree that represents the morse corde standard.  Each left
+[This](https://upload.wikimedia.org/wikipedia/commons/c/ca/Morse_code_tree3.png) is the binary tree that represents the morse code standard. Each left
 branch represents a dot and each right branch represents a dash.
 
-The tree can be flattend according to a Breadth First Traversal. The exclamation
+The tree can be flattened according to a Breadth First Traversal. The exclamation
 marks represent special characters.
 
 ```
@@ -85,7 +85,7 @@ The shift value being 42.
 
 ## Packet Construction
 There are 8 bytes in total in the packet payload itself. It is of fixed length.
-The packet is rather simple to constuct. 
+The packet is rather simple to construct. 
 
 Here are the details of each byte:
 ```
@@ -119,7 +119,7 @@ I chose XXTEA because it is corrected version of its predecessors.
 XXTEA, however, comes with a price. XXTEA can only work on blocks that are a
 multiple of 32 bits that are greater than or equal to 64 bits. This presented a
 problem. Since we are only sending a byte(8 bits), 56 of those bits would be
-completely wasted. I have chosen to repurpose some byte for presentational
+completely wasted. I have chosen to use some byte for presentational
 purposes(header and footer) and one more byte for parity checks.
 
 The remaining 4 bytes are just garbage data that is generated randomly within
@@ -131,7 +131,7 @@ If these random bytes were not filled, the values in those positions will always
 be an unchanging value, let's assume 0. Therefore, the packet for A will always
 be the same(even after encryption) no matter how many times you send it. The
 attacker can use this information to map out all the possible outputs on the
-gpio pin for all the combinations and essentially create a device that can talk
+GPIO pin for all the combinations and essentially create a device that can talk
 to a Receiver without even having to know the packet format.
 
 However, if these 4 bytes are filled with random values, the chances of two
@@ -139,7 +139,7 @@ packets for A being the same are 1 in 4294967296. Well, almost. Because the
 random number generator can only be so random the chances are probably higher than
 that.
 
-A relavant excerpt from the documentation for `uBit.random(int)`:
+A relevant excerpt from the documentation for `uBit.random(int)`:
 ```
 We use a simple Galois LFSR random number generator here, as a Galois LFSR is
 sufficient for our applications, and much more lightweight than the hardware
@@ -155,7 +155,7 @@ Transmission of the data proved to be quite a challenge. Initially an attempt
 was made with sending HI signals for different durations to signify a LO and a
 HI. Using this method, to send all HI 64 bits, it would take at least `(64*2n)`
 milliseconds(`2n` because there should be a LO signal segregating the HIs) where
-`n` is the minimum duration that the gpio pin can be HI or LO and be noticable
+`n` is the minimum duration that the GPIO pin can be HI or LO and be noticeable
 on the microbit on the other end. 
 
 Through various tests, I have narrowed down the value to about `35-40`ms.  So,
@@ -168,7 +168,7 @@ Therefore, the duration would actually be more than 4.4seconds.
 The next method I tried, and the method that was ultimately used in this
 project, is using n(which I had found earlier) milliseconds of GPIO signals,
 either HI or LO to send HIs and LOs respectively. Using this method,
-theoratically you could send 64 bits over in `2240`ms. All of it!
+theoretically you could send 64 bits over in `2240`ms. All of it!
 
 The transmission worked as follows:
 ```
@@ -178,16 +178,16 @@ The transmission worked as follows:
 ```
 
 ## Receiving
-The reciever would read the data, assure that the first byte is a 'marker byte'
-by comparing the value to `0xAB`. If not, the Reciever will choose to reset
+The Receiver would read the data, assure that the first byte is a 'marker byte'
+by comparing the value to `0xAB`. If not, the Receiver will choose to reset
 itself. 
 
-The Reciever reads all 10 bytes of the data, checks if the marker bytes are
+The Receiver reads all 10 bytes of the data, checks if the marker bytes are
 encapsulating the packet.  Decryption occurs here as well, but only on the 8
 bytes encapsulated within the marker bytes. After decryption, the first and last
 bytes are compared with the respective values. The obfuscated value is grabbed
 and its parity is compared with the parity byte present in the packet. Finally,
-the obfuscated value is then passed back through the Ceaser cipher to get the
+the obfuscated value is then passed back through the Caesar cipher to get the
 original value.
 
 The character corresponding to this value in the binary tree is then displayed
