@@ -89,9 +89,9 @@ void Controller::start() {
     sender->start();
 
   } else if (role == Beta) {
-    DEBUG(mbit, "Initialized as a reciever!");
-    Receiver *reciever = new Receiver(mbit);
-    DEBUG(mbit, "Reciever has been intialized");
-    reciever->start();
+    DEBUG(mbit, "Initialized as a receiver!");
+    Receiver *receiver = new Receiver(mbit);
+    DEBUG(mbit, "Receiver has been intialized");
+    receiver->start();
   }
 };

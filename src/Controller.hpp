@@ -16,7 +16,7 @@ class Controller {
 private:
   /**
    * Role enumeration that is used to differentiate whether or not the microbit
-   * the program is running is is a Sender, or a Reciever.
+   * the program is running is is a Sender, or a Receiver.
    */
   enum Role { None, Alpha, Beta };
 
