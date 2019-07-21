@@ -8,8 +8,8 @@ These instructions will get you a copy of the project up and running.
 
 ### Prerequisites
 
-1. ( Yotta )[http://docs.yottabuild.org/#installing]
-2. ( Git )[https://git-scm.com/]  (Only if you are cloning the repository)
+1. (Yotta)[http://docs.yottabuild.org/#installing]
+2. (Git)[https://git-scm.com/]  (Only if you are cloning the repository)
 
 
 ### Building
@@ -31,7 +31,7 @@ cp build/bbc-microbit-classic-gcc/src/*-combined.hex /run/media/$USERNAME/MICROB
 
 ## License
 
-This project is licensed under the GNU GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GNU GPLv3 License - see the LICENSE file for details
 
 ## Acknowledgments
 
