@@ -6,7 +6,6 @@
 #include "Sender.hpp"
 #include "common.hpp"
 
-
 class Controller {
 private:
   /**

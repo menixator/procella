@@ -6,7 +6,7 @@ Receiver::Receiver(MicroBit *mbit) {
   this->cipher = new XXTEACipher(CIPHER_KEY, CIPHER_KEY_LENGTH);
   // Prepare to listen for events.
   mbit->io.P1.eventOn(MICROBIT_PIN_EVENT_ON_PULSE);
-  DEBUG(mbit, "Receiver has been initialized");
+  INFO(mbit, "Receiver has been initialized");
   setupListeners();
 };
 
@@ -17,7 +17,7 @@ Receiver::~Receiver() {
 };
 
 void Receiver::setupListeners() {
-  DEBUG(mbit, "Setting up listeners");
+  INFO(mbit, "Setting up listeners");
   mbit->messageBus.listen(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_HI, this,
                           &Receiver::onPulseHigh,
                           MESSAGE_BUS_LISTENER_IMMEDIATE);
@@ -71,13 +71,13 @@ void Receiver::reset() {
 }
 
 void Receiver::onPacket() {
-  DEBUG(mbit, "Complete!");
-#if SHOULD_DEBUG
-  DEBUGF(mbit, "char encrypted[] = {");
+  INFO(mbit, "Complete!");
+#if DEBUG
+  INFOF(mbit, "char encrypted[] = {");
   for (int i = 0; i < PACKET_SIZE; i++) {
-    DEBUGF(mbit, "0x%02x, ", buffer[i]);
+    INFOF(mbit, "0x%02x, ", buffer[i]);
   }
-  DEBUG(mbit, "}");
+  INFO(mbit, "}");
 #endif
   // So apparently, when you call a class method on another class, the member
   // data of the currnet class becomes unavailable? Really frustrating . . . .
@@ -88,18 +88,18 @@ void Receiver::onPacket() {
   // works on 32bit blocks and 8 bytes will equate to 2 32bit blocks.
   cipher->decrypt((uint32_t *)encrypted_data, 2);
 
-#if SHOULD_DEBUG
-  DEBUGF(mbit, "char decrypted[] = {");
+#if DEBUG
+  INFOF(mbit, "char decrypted[] = {");
   for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-    DEBUGF(mbit, "0x%02x, ", encrypted_data[i]);
+    INFOF(mbit, "0x%02x, ", encrypted_data[i]);
   }
-  DEBUG(mbit, "}");
+  INFO(mbit, "}");
 #endif
 
   if (buffer[0] != MARKER_BYTE || buffer[PACKET_SIZE - 1] != MARKER_BYTE ||
       encrypted_data[0] != morse::ESC ||
       encrypted_data[PACKET_BODY_SIZE - 1] != morse::EOW) {
-    DEBUG(mbit, "basic checks failed on the packet!");
+    INFO(mbit, "basic checks failed on the packet!");
     mbit->display.printAsync(CROSS_IMAGE);
     lastScreenActivity = mbit->systemTime();
   } else {
@@ -107,11 +107,11 @@ void Receiver::onPacket() {
     uint8_t obfuscated = encrypted_data[1];
     uint8_t deobfuscated = morse::deobfuscate(obfuscated, CEASER_SHIFT);
     if (utils::parity(obfuscated) != parity) {
-      DEBUG(mbit, "parity check failed");
+      INFO(mbit, "parity check failed");
       mbit->display.printAsync(CROSS_IMAGE);
       lastScreenActivity = mbit->systemTime();
     } else {
-      DEBUG(mbit, "success: character is %c", morse::LEXICON[deobfuscated]);
+      INFO(mbit, "success: character is %c", morse::LEXICON[deobfuscated]);
       mbit->display.printAsync(morse::LEXICON[deobfuscated]);
       lastScreenActivity = mbit->systemTime();
     }
@@ -122,8 +122,8 @@ void Receiver::onPacket() {
 
 void Receiver::onPulseHigh(MicroBitEvent event) {
   uint8_t repetitions = (event.timestamp / 1000) / TX_SPEED;
-  DEBUG(mbit, "Got a HI with %d repetitions, bits written: %d", repetitions,
-        bitsRead);
+  INFO(mbit, "Got a HI with %d repetitions, bits written: %d", repetitions,
+       bitsRead);
   for (uint8_t i = 0; i < repetitions; i++) {
     onBit(1);
   }
@@ -137,8 +137,8 @@ void Receiver::onPulseLow(MicroBitEvent event) {
 
   // Get the number of repetitions.
   uint8_t repetitions = (event.timestamp / 1000) / TX_SPEED;
-  DEBUG(mbit, "Got a LO with %d repetitions, bits written: %d", repetitions,
-        bitsRead);
+  INFO(mbit, "Got a LO with %d repetitions, bits written: %d", repetitions,
+       bitsRead);
   for (uint8_t i = 0; i < repetitions; i++) {
     onBit(0);
   }

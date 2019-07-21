@@ -17,7 +17,7 @@ Sender::~Sender() {
 };
 
 void Sender::setupListeners() {
-  DEBUG(mbit, "Setting up listeners");
+  INFO(mbit, "Setting up listeners");
   mbit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_DOWN, this,
                           &Sender::onButtonADown);
   mbit->messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_UP, this,
@@ -46,7 +46,7 @@ void Sender::onButtonADown(MicroBitEvent event) {
   if (buttonADownTimestamp > 0) {
     return;
   }
-  DEBUG(mbit, "Button A is down!");
+  INFO(mbit, "Button A is down!");
 
   // event.timestamp is in microseconds. To get milliseconds, we are dividing it
   // by 1000.
@@ -63,7 +63,7 @@ void Sender::onButtonAUp(MicroBitEvent event) {
   if (buttonADownTimestamp == 0) {
     return;
   }
-  DEBUG(mbit, "Button A is up!");
+  INFO(mbit, "Button A is up!");
 
   // event.timestamp is in microseconds, convert it to milliseconds
   uint64_t buttonAUpTimestamp = event.timestamp / 1000;
@@ -74,10 +74,10 @@ void Sender::onButtonAUp(MicroBitEvent event) {
   // Push the appropriate values to the buffer if the duration for which button
   // A was down fits the ranges defined by the macros (DIT/DAH)_(MIN/MAX).
   if (duration >= DIT_MIN && duration < DIT_MAX) {
-    DEBUG(mbit, "Dot added!");
+    INFO(mbit, "Dot added!");
     buffer.push_back(DOT);
   } else if (duration >= DAH_MIN && duration < DAH_MAX) {
-    DEBUG(mbit, "Dash added!");
+    INFO(mbit, "Dash added!");
     buffer.push_back(DASH);
   }
 
@@ -98,13 +98,13 @@ void Sender::onButtonAUp(MicroBitEvent event) {
  */
 void Sender::onButtonBPress(MicroBitEvent event) {
   (void)event;
-  DEBUG(mbit, "Button B is up!");
+  INFO(mbit, "Button B is up!");
   startTransmitting();
 };
 
 void Sender::startTransmitting() {
   if (!sending && buffer.size() > 0) {
-    DEBUG(mbit, "Sending the data soon!");
+    INFO(mbit, "Sending the data soon!");
     // Since all the data is being set in the main fiber, we just set a flag in
     // the listeners.
     sending = true;
@@ -127,7 +127,8 @@ void Sender::start() {
         (mbit->systemTime() - buttonADownTimestamp) > DAH_MIN &&
         (mbit->systemTime() - buttonADownTimestamp) < DAH_MAX) {
       mbit->display.printAsync(DASH_IMAGE);
-    } else if (buttonADownTimestamp > 0 && (mbit->systemTime() - buttonADownTimestamp) > DAH_MAX) {
+    } else if (buttonADownTimestamp > 0 &&
+               (mbit->systemTime() - buttonADownTimestamp) > DAH_MAX) {
       // Otherwise, just clear the image.
       mbit->display.clear();
     }
@@ -138,12 +139,12 @@ void Sender::start() {
 void Sender::writeBit(uint8_t bit) {
 // A debugging routine that checks if we have slept an appropriate amount of
 // time.
-#if SHOULD_DEBUG
+#if DEBUG
   static uint64_t last_call = 0;
   if (last_call > 0) {
     uint64_t diff = mbit->systemTime() - last_call;
     if (diff < TX_SPEED) {
-      DEBUG(mbit, "diff is: %d milliseconds", diff);
+      INFO(mbit, "diff is: %d milliseconds", diff);
     }
   }
   last_call = mbit->systemTime();
@@ -178,40 +179,40 @@ void Sender::transmit() {
   // the vector buffer to an integer.
   uint8_t value = morse::stoi(&buffer);
 
-  DEBUG(mbit, "value is: %d", value);
+  INFO(mbit, "value is: %d", value);
 
-#if SHOULD_DEBUG
-  DEBUGF(mbit, "The sequence is: ");
+#if DEBUG
+  INFOF(mbit, "The sequence is: ");
   for (MorseTick tick : buffer) {
     if (tick == DOT) {
-      DEBUGF(mbit, ".");
+      INFOF(mbit, ".");
     } else {
-      DEBUGF(mbit, "-");
+      INFOF(mbit, "-");
     }
   }
 
-  DEBUG(mbit, "");
+  INFO(mbit, "");
 #endif
   // empty the buffer
   buffer.clear();
 
-#if SHOULD_DEBUG
-  DEBUGF(mbit, "Sequence starting from value: ");
+#if DEBUG
+  INFOF(mbit, "Sequence starting from value: ");
 
   for (int i = value; i < morse::LEXICON_LENGTH; i++) {
-    DEBUGF(mbit, "%c", morse::LEXICON[i]);
+    INFOF(mbit, "%c", morse::LEXICON[i]);
   }
-  DEBUG(mbit, "");
+  INFO(mbit, "");
 #endif
 
   // Only send the value if it is a valid morse character.
   if (morse::isValid(value)) {
 
-    DEBUG(mbit, "character is: %c", morse::LEXICON[value]);
+    INFO(mbit, "character is: %c", morse::LEXICON[value]);
     // obfuscate the value
     uint8_t obfuscated_value = morse::obfuscate(value, CEASER_SHIFT);
 
-    DEBUG(mbit, "obfuscated value is: %d", obfuscated_value);
+    INFO(mbit, "obfuscated value is: %d", obfuscated_value);
 
     // seed the RNG
     mbit->seedRandom();
@@ -230,25 +231,25 @@ void Sender::transmit() {
                                         (uint8_t)((padding >> 24) & 0xFF),
                                         morse::EOW};
 
-#if SHOULD_DEBUG
-    DEBUGF(mbit, "char raw[] = {");
+#if DEBUG
+    INFOF(mbit, "char raw[] = {");
     for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-      DEBUGF(mbit, "0x%02x %s", packet[i],
-             i == PACKET_BODY_SIZE - 1 ? "" : ", ");
+      INFOF(mbit, "0x%02x %s", packet[i],
+            i == PACKET_BODY_SIZE - 1 ? "" : ", ");
     }
-    DEBUG(mbit, "}");
+    INFO(mbit, "}");
 #endif
 
     // Encrypt the data.
     cipher->encrypt((uint32_t *)packet, 2);
 
-#if SHOULD_DEBUG
-    DEBUGF(mbit, "char encrypted[] = {");
+#if DEBUG
+    INFOF(mbit, "char encrypted[] = {");
     for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-      DEBUGF(mbit, "0x%02x %s", packet[i],
-             i == PACKET_BODY_SIZE - 1 ? "" : ", ");
+      INFOF(mbit, "0x%02x %s", packet[i],
+            i == PACKET_BODY_SIZE - 1 ? "" : ", ");
     }
-    DEBUG(mbit, "}");
+    INFO(mbit, "}");
 #endif
 
     writeMarker();

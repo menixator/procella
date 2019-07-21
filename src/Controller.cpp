@@ -74,7 +74,7 @@ Controller::~Controller() {
  * The main activity of the Controller is done here
  */
 void Controller::start() {
-  DEBUG(mbit, "Controller is starting");
+  INFO(mbit, "Controller is starting");
 
   // Sleep while the role is undecided.
   while (role == None) {
@@ -83,15 +83,15 @@ void Controller::start() {
 
   // Start the designated role controllers when the role is decided.
   if (role == Alpha) {
-    DEBUG(mbit, "Initialized as a sender!");
+    INFO(mbit, "Initialized as a sender!");
     Sender *sender = new Sender(mbit);
-    DEBUG(mbit, "Sender has been intialized");
+    INFO(mbit, "Sender has been intialized");
     sender->start();
 
   } else if (role == Beta) {
-    DEBUG(mbit, "Initialized as a receiver!");
+    INFO(mbit, "Initialized as a receiver!");
     Receiver *receiver = new Receiver(mbit);
-    DEBUG(mbit, "Receiver has been intialized");
+    INFO(mbit, "Receiver has been intialized");
     receiver->start();
   }
 };

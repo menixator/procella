@@ -5,13 +5,18 @@
 #include "MicroBit.h"
 #include <cstdint>
 
-#define SHOULD_DEBUG 1
-#if SHOULD_DEBUG
-#define DEBUGF(mbit, fmt, ...) mbit->serial.printf(fmt, ##__VA_ARGS__)
-#define DEBUG(mbit, fmt, ...) mbit->serial.printf(fmt "\r\n", ##__VA_ARGS__)
-#else
-#define DEBUG(mbit, fmt, ...) 0
-#define DEBUGF(mbit, fmt, ...) 0
+#define DEBUG 1
+#if DEBUG
+#define INFOF(mbit, fmt, ...)                                                  \
+  do {                                                                         \
+    if (DEBUG)                                                                 \
+      mbit->serial.printf(fmt, ##__VA_ARGS__);                                 \
+  } while (0)
+#define INFO(mbit, fmt, ...)                                                   \
+  do {                                                                         \
+    if (DEBUG)                                                                 \
+      mbit->serial.printf(fmt "\r\n", ##__VA_ARGS__);                          \
+  } while (0)
 #endif
 
 typedef uint8_t MorseTick;
