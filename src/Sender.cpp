@@ -127,7 +127,7 @@ void Sender::start() {
         (mbit->systemTime() - buttonADownTimestamp) > DAH_MIN &&
         (mbit->systemTime() - buttonADownTimestamp) < DAH_MAX) {
       mbit->display.printAsync(DASH_IMAGE);
-    } else {
+    } else if (buttonADownTimestamp > 0) {
       // Otherwise, just clear the image.
       mbit->display.clear();
     }
