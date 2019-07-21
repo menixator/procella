@@ -2,13 +2,16 @@
 
 Receiver::Receiver(MicroBit *mbit) {
   this->mbit = mbit;
+  // Initialize the cipher.
   this->cipher = new XXTEACipher(CIPHER_KEY, CIPHER_KEY_LENGTH);
+  // Prepare to listen for events.
   mbit->io.P1.eventOn(MICROBIT_PIN_EVENT_ON_PULSE);
   DEBUG(mbit, "Receiver has been initialized");
   setupListeners();
 };
 
 Receiver::~Receiver() {
+  // Clean up after ourselves.
   tearDownListeners();
   delete cipher;
 };
@@ -31,24 +34,30 @@ void Receiver::tearDownListeners() {
 };
 
 void Receiver::onBit(uint8_t bit) {
-
-  // If all 8bytes were written, ignore it.
+  // If a packet is being processed, ignore the new bit.
   if (bitsRead >= PACKET_SIZE * BITS_PER_BYTE) {
     return;
   };
 
+  // Shift the byte we are writing to the LEFT(since we are receiving BIG ENDIAN
+  // data).
   buffer[bitsRead / BITS_PER_BYTE] <<= 1;
+  // Add the required bit in.
   buffer[bitsRead / BITS_PER_BYTE] += (bit & 0x1);
+
   bitsRead++;
   lastActivity = mbit->systemTime();
 
   // Check if header is over
-  if (this->bitsRead >= BITS_PER_BYTE) {
+  if (bitsRead >= BITS_PER_BYTE) {
+
+    // If the first byte is not the marker byte, reset ourselves.
     if (buffer[0] != MARKER_BYTE) {
       reset();
     }
   }
 
+  // If the full packet has been read, call onPacket()
   if (bitsRead >= PACKET_SIZE * BITS_PER_BYTE) {
     onPacket();
   }
@@ -138,9 +147,17 @@ void Receiver::onPulseLow(MicroBitEvent event) {
 void Receiver::start() {
   while (1) {
     mbit->sleep(20);
+    // Clears the screen when 1000ms have passed without the screen
+    // changing.
     if (lastScreenActivity > 0 &&
         mbit->systemTime() - lastScreenActivity > 1000) {
+      lastScreenActivity = 0;
       mbit->display.clear();
+    }
+
+    // Reset if a a packet goes incomplete for too long.
+    if (lastActivity > 0 && mbit->systemTime() - lastActivity > 3000) {
+      reset();
     }
   }
 }

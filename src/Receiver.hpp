@@ -66,6 +66,9 @@ public:
   // Constructor
   Receiver(MicroBit *mbit);
   virtual ~Receiver();
+  /**
+   * Starts the main loop
+   */
   void start();
 };
 
