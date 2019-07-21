@@ -32,6 +32,7 @@ typedef uint8_t MorseTick;
 #define DAH_MIN 500
 #define DAH_MAX 2500
 
+#define BITS_PER_BYTE 8
 #define PACKET_SIZE 10
 #define PACKET_BODY_SIZE 8
 #define MARKER_BYTE 0xAB
