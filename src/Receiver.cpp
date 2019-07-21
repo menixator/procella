@@ -121,7 +121,7 @@ void Receiver::onPacket() {
 };
 
 void Receiver::onPulseHigh(MicroBitEvent event) {
-  uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
+  uint8_t repetitions = (event.timestamp / 1000) / TX_SPEED;
   DEBUG(mbit, "Got a HI with %d repetitions, bits written: %d", repetitions,
         bitsRead);
   for (uint8_t i = 0; i < repetitions; i++) {
@@ -136,7 +136,7 @@ void Receiver::onPulseLow(MicroBitEvent event) {
   }
 
   // Get the number of repetitions.
-  uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
+  uint8_t repetitions = (event.timestamp / 1000) / TX_SPEED;
   DEBUG(mbit, "Got a LO with %d repetitions, bits written: %d", repetitions,
         bitsRead);
   for (uint8_t i = 0; i < repetitions; i++) {

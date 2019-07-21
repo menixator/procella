@@ -142,7 +142,7 @@ void Sender::writeBit(uint8_t bit) {
   static uint64_t last_call = 0;
   if (last_call > 0) {
     uint64_t diff = mbit->systemTime() - last_call;
-    if (diff < TX_SLEEP) {
+    if (diff < TX_SPEED) {
       DEBUG(mbit, "diff is: %d milliseconds", diff);
     }
   }
@@ -151,7 +151,7 @@ void Sender::writeBit(uint8_t bit) {
 
   // Writes the value to the GPIO pin.
   mbit->io.P0.setDigitalValue(bit > 0);
-  mbit->sleep(TX_SLEEP);
+  mbit->sleep(TX_SPEED);
 };
 
 void Sender::writeByte(uint8_t byte) {
