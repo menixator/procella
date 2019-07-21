@@ -1,5 +1,5 @@
 {
-  "name": "microbit-morse-gpio",
+  "name": "morseus",
   "version": "0.0.1",
   "description": "A program to transmit morse code between two microbits using gpio pins",
   "license": "GPL3",
