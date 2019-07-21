@@ -8,7 +8,6 @@
 #include "utils.hpp"
 #include <vector>
 
-#define SENDER_IDLE 20
 #define BUFFER_MAX_SIZE 6
 
 using namespace std;

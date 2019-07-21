@@ -78,7 +78,7 @@ void Controller::start() {
 
   // Sleep while the role is undecided.
   while (role == None) {
-    mbit->sleep(ROLE_CHECK_INTERVAL);
+    mbit->sleep(TX_SPEED);
   }
 
   // Start the designated role controllers when the role is decided.

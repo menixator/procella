@@ -6,11 +6,6 @@
 #include "Sender.hpp"
 #include "common.hpp"
 
-/**
- * Decides how long the Controller component will put the microbit into a sleep
- * when the role is undecided.
- */
-#define ROLE_CHECK_INTERVAL 15
 
 class Controller {
 private:

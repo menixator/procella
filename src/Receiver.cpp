@@ -146,7 +146,7 @@ void Receiver::onPulseLow(MicroBitEvent event) {
 
 void Receiver::start() {
   while (1) {
-    mbit->sleep(20);
+    mbit->sleep(TX_SPEED);
     // Clears the screen when 1000ms have passed without the screen
     // changing.
     if (lastScreenActivity > 0 &&

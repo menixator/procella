@@ -131,7 +131,7 @@ void Sender::start() {
       // Otherwise, just clear the image.
       mbit->display.clear();
     }
-    mbit->sleep(SENDER_IDLE);
+    mbit->sleep(TX_SPEED);
   }
 };
 
