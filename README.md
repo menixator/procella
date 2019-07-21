@@ -248,6 +248,9 @@ on the screen. If any of the checks failed, a cross is displayed indicating that
 something went wrong.
 
 
+## State Diagram
+The state diagram can be found [here](doc/StateDiagram.png).
+
 ## License
 
 This project is licensed under the GNU GPLv3 License - see the LICENSE file for details
