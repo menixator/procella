@@ -22,7 +22,7 @@ typedef uint8_t MorseTick;
 
 #define ESCAPE_CHAR '!'
 
-#define TX_SLEEP 40
+#define TX_SLEEP 35
 
 // Some flexible definitions for ranges on the duration that the user can hold
 // down the button/s for.
