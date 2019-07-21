@@ -5,8 +5,6 @@
 #include "Receiver.hpp"
 #include "Sender.hpp"
 #include "common.hpp"
-#include "morse.hpp"
-#include <vector>
 
 // How long to sleep when role is undecided
 #define ROLE_CHECK_INTERVAL 15
