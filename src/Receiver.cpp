@@ -63,27 +63,29 @@ void Receiver::reset() {
 
 void Receiver::onPacket() {
   DEBUG(mbit, "Complete!");
-  if (SHOULD_DEBUG) {
-    DEBUGF(mbit, "char encrypted[] = {");
-    for (int i = 0; i < PACKET_SIZE; i++) {
-      DEBUGF(mbit, "0x%02x, ", buffer[i]);
-    }
-    DEBUG(mbit, "}");
+#if SHOULD_DEBUG
+  DEBUGF(mbit, "char encrypted[] = {");
+  for (int i = 0; i < PACKET_SIZE; i++) {
+    DEBUGF(mbit, "0x%02x, ", buffer[i]);
   }
-  // So apparently, when you call a class method, the member data becomes
-  // unavailable? Really frustrating . . . .
+  DEBUG(mbit, "}");
+#endif
+  // So apparently, when you call a class method on another class, the member
+  // data of the currnet class becomes unavailable? Really frustrating . . . .
   uint8_t encrypted_data[8] = {0};
   std::memcpy(encrypted_data, buffer + 1, 8);
 
+  // Notice the 2, instead of the actual size, 8. This is because the ciper
+  // works on 32bit blocks and 8 bytes will equate to 2 32bit blocks.
   cipher->decrypt((uint32_t *)encrypted_data, 2);
 
-  if (SHOULD_DEBUG) {
-    DEBUGF(mbit, "char decrypted[] = {");
-    for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-      DEBUGF(mbit, "0x%02x, ", encrypted_data[i]);
-    }
-    DEBUG(mbit, "}");
+#if SHOULD_DEBUG
+  DEBUGF(mbit, "char decrypted[] = {");
+  for (int i = 0; i < PACKET_BODY_SIZE; i++) {
+    DEBUGF(mbit, "0x%02x, ", encrypted_data[i]);
   }
+  DEBUG(mbit, "}");
+#endif
 
   if (buffer[0] != MARKER_BYTE || buffer[PACKET_SIZE - 1] != MARKER_BYTE ||
       encrypted_data[0] != morse::ESC ||
@@ -110,9 +112,6 @@ void Receiver::onPacket() {
 };
 
 void Receiver::onPulseHigh(MicroBitEvent event) {
-
-  // We are in mid packet.
-  // TODO: repetitions can overflow
   uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
   DEBUG(mbit, "Got a HI with %d repetitions, bits written: %d", repetitions,
         bitsRead);
@@ -122,13 +121,12 @@ void Receiver::onPulseHigh(MicroBitEvent event) {
 }
 
 void Receiver::onPulseLow(MicroBitEvent event) {
-
+  // If the first pulse is a low pulse, ignore it.
   if (bitsRead == 0) {
     return;
   }
 
-  // We are in mid packet.
-  // TODO: repetitions can overflow
+  // Get the number of repetitions.
   uint8_t repetitions = (event.timestamp / 1000) / TX_SLEEP;
   DEBUG(mbit, "Got a LO with %d repetitions, bits written: %d", repetitions,
         bitsRead);
