@@ -62,15 +62,13 @@ The internal buffer of the Sender can hold a limited amount of dits/dahs. This
 is to make sure that the value being trasmitted fits into a single byte(less
 than 256).  If the internal buffer is on the verge going over the limit, the
 Sender will initiate a transmission forcefully.  To convert the morse code
-signal to a integer value, a binary tree representation of the morse code
+signal to an integer value, a binary tree representation of the morse code
 alphabet is used.
 
-This is the binary tree that represents the morse corde standard.  Each left
-branch represents a dot and each right branch represnts a dash.
+[This](https://upload.wikimedia.org/wikipedia/commons/c/ca/Morse_code_tree3.png) is the binary tree that represents the morse corde standard.  Each left
+branch represents a dot and each right branch represents a dash.
 
-![Morse Code Binary Tree](https://upload.wikimedia.org/wikipedia/commons/c/ca/Morse_code_tree3.png)
-
-This can be flattend according to a Breadth First Traversal. The exclamation
+The tree can be flattend according to a Breadth First Traversal. The exclamation
 marks represent special characters.
 
 ```
@@ -82,7 +80,7 @@ in the above string instead its ASCII value to represent it during transmission.
 
 After the more code signals that the user had entered have been converted into
 an integer value, a simple [Caesar Cipher](https://en.wikipedia.org/wiki/Caesar_cipher) is applied to the value.
-The shift value being [42](https://en.wikipedia.org/wiki/Phrases_from_The_Hitchhiker%27s_Guide_to_the_Galaxy#Answer_to_the_Ultimate_Question_of_Life,_the_Universe,_and_Everything_(42).
+The shift value being 42.
 
 
 ## Packet Construction
@@ -115,32 +113,42 @@ family:
 3. XXTEA - Corrected TEA
 
 These were 3 very simple encryption algorithms that did not require too much
-processing to be done and did not require too much memory. These 3 algorithms
-were tiny as the name implies. I chose XXTEA because it is corrected version of
-its predecessors.
+processing or too much memory. These 3 algorithms were tiny as the names imply.
+I chose XXTEA because it is corrected version of its predecessors.
 
-XXTEA however, comes with a price. XXTEA can only work on blocks that are a
-multiple of 32bits that are greater than or equal to 64bits. This presented a
+XXTEA, however, comes with a price. XXTEA can only work on blocks that are a
+multiple of 32 bits that are greater than or equal to 64 bits. This presented a
 problem. Since we are only sending a byte(8 bits), 56 of those bits would be
-completely wasted. I have chosen to repupose some byte for presentational
-purposes(header and footer) and  one more byte for parity checks.
+completely wasted. I have chosen to repurpose some byte for presentational
+purposes(header and footer) and one more byte for parity checks.
 
 The remaining 4 bytes are just garbage data that is generated randomly within
 the microbit. This would actually help mitigate an attack where the attacker has
 access to a microbit running the program and reading the output on the other end
 of the GPIO pin.
 
-If these random bytes were not filled, the values will always be a static value,
-lets assume 0. Therefore, the packet for A will always be the same(even after
-encryption) no matter how many times you send it. The attacker can use this
-information to map out all the possible outputs on the gpio pin for all the
-combinations and essentially create a device that can talk to a Receiver without
-even having to know the packet format.
+If these random bytes were not filled, the values in those positions will always
+be an unchanging value, lets assume 0. Therefore, the packet for A will always
+be the same(even after encryption) no matter how many times you send it. The
+attacker can use this information to map out all the possible outputs on the
+gpio pin for all the combinations and essentially create a device that can talk
+to a Receiver without even having to know the packet format.
 
 However, if these 4 bytes are filled with random values, the chances of two
 packets for A being the same are 1 in 4294967296. Well, almost. Because the
-random number generator is only so random the chances are probably higher than
+random number generator can only be so random the chances are probably higher than
 that.
+
+A relavant excerpt from the documentation for `uBit.random(int)`:
+```
+We use a simple Galois LFSR random number generator here, as a Galois LFSR is
+sufficient for our applications, and much more lightweight than the hardware
+random number generator built int the processor, which takes a long time and
+uses a lot of energy.
+
+KIDS: You shouldn't use this is the real world to generate cryptographic keys
+though...  have a think why not. :-)                                                              
+```
 
 ## Transmission
 Transmission of the data proved to be quite a challenge. Initially an attempt
