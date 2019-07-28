@@ -40,6 +40,8 @@ If the microbit was initialized as a Sender, you should see an arrow climbing
 up, indicating your selection.  You will see an animation from the Receiver as
 well, except the arrow will point downwards.
 
+Connect the microbits from Pin 0 of the intended Sender to Pin 1 of the intended
+receiver.
 
 To send data between the microbits, you'll have to hold down the Button A on the
 Sender for a designated period and then.  When you are done entering the data
