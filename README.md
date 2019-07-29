@@ -1,4 +1,4 @@
-# Morseus
+# Procella
 
 Encrypted message passing between to BBC Micro:bits over bluetooth.
 
