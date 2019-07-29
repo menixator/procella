@@ -1,6 +1,6 @@
 # Morseus
 
-Encrypted message passing between to BBC Micro:bits over GPIO pins.
+Encrypted message passing between to BBC Micro:bits over bluetooth.
 
 ## Getting Started
 
@@ -40,9 +40,6 @@ If the microbit was initialized as a Sender, you should see an arrow climbing
 up, indicating your selection.  You will see an animation from the Receiver as
 well, except the arrow will point downwards.
 
-Connect the microbits from Pin 0 of the intended Sender to Pin 1 of the intended
-receiver.
-
 To send data between the microbits, you'll have to hold down the Button A on the
 Sender for a designated period and then.  When you are done entering the data
 for the character, you can press the Button B on the Sender to transmit the data
@@ -54,8 +51,7 @@ for the character, you can press the Button B on the Sender to transmit the data
   buffer.
 
 When Button B is pressed on the Sender, the screen will show a small animation
-indicating that the data is being transmitted.  After ~2 seconds(the details
-about the time will be discussed further below) the Receiver will display the
+indicating that the data is being transmitted.  The Receiver will display the
 transmitted character on the LED display.
 
 The supported characters are as follows:
@@ -179,14 +175,13 @@ purposes(header and footer) and one more byte for parity checks.
 
 The remaining 4 bytes are just garbage data that is generated randomly within
 the microbit. This would actually help mitigate an attack where the attacker has
-access to a microbit running the program and reading the output on the other end
-of the GPIO pin.
+access to a microbit running the program and reading the output.
 
 If these random bytes were not filled, the values in those positions will always
 be an unchanging value, let's assume 0. Therefore, the packet for A will always
 be the same(even after encryption) no matter how many times you send it. The
 attacker can use this information to map out all the possible outputs on the
-GPIO pin for all the combinations and essentially create a device that can talk
+for all the combinations and essentially create a device that can talk
 to a Receiver without even having to know the packet format.
 
 However, if these 4 bytes are filled with random values, the chances of two
@@ -206,38 +201,19 @@ though...  have a think why not. :-)
 ```
 
 ## Transmission
-Transmission of the data proved to be quite a challenge. Initially an attempt
-was made with sending HI signals for different durations to signify a LO and a
-HI. Using this method, to send all HI 64 bits, it would take at least `(64*2n)`
-milliseconds(`2n` because there should be a LO signal segregating the HIs) where
-`n` is the minimum duration that the GPIO pin can be HI or LO and be noticeable
-on the microbit on the other end. 
-
-Through various tests, I have narrowed down the value to about `35-40`ms.  So,
-by using this method, it would take about `4480` milliseconds. Which obviously
-did not sit well with me.  Of course this value is not realistic because n is
-the minimum time it would take. Since we have to send LOs as well, the duration
-that the GPIO pin is high for LO's should be MORE than n to differentiate them.
-Therefore, the duration would actually be more than 4.4seconds.
-
-The next method I tried, and the method that was ultimately used in this
-project, is using n(which I had found earlier) milliseconds of GPIO signals,
-either HI or LO to send HIs and LOs respectively. Using this method,
-theoretically you could send 64 bits over in `2240`ms. All of it!
-
-The transmission worked as follows:
+The data is transmitted over bluetooth using the radio module of the microbit.
+The packet looks like this:
 ```
-0xAB: A sort of palate cleanser for the GPIO pins. It assures that every transmission begins with a HI.
+0xAB: a marker byte
 [8 BYTES OF ENCRYPTED DATA]
-0xAB: Same as the header but assures that every transmission ENDS in a low.
+0xAB: Same as the header.
 ```
 
 ## Receiving
 The Receiver would read the data, assure that the first byte is a 'marker byte'
-by comparing the value to `0xAB`. If not, the Receiver will choose to reset
-itself. 
+by comparing the value to `0xAB`. If not, the Receiver will choose to ignore it.
 
-The Receiver reads all 10 bytes of the data, checks if the marker bytes are
+The Receiver receives the packet and checks if the marker bytes are
 encapsulating the packet.  Decryption occurs here as well, but only on the 8
 bytes encapsulated within the marker bytes. After decryption, the first and last
 bytes are compared with the respective values. The obfuscated value is grabbed
