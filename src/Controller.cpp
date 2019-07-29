@@ -34,6 +34,7 @@ void Controller::onRoleDecided(Role newRole) {
 Controller::Controller() {
   // Initialize the required components. ESPECIALLY THE SCHEDULER.
   mbit->init();
+  mbit->radio.enable();
   setupListeners();
 };
 
