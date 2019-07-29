@@ -2,6 +2,7 @@
 
 Sender::Sender(MicroBit *mbit) {
   this->mbit = mbit;
+  INFO(mbit, "Sender has been initialized");
 
   // The cipher has to be initialized on the HEAP.
   cipher = new XXTEACipher(CIPHER_KEY, CIPHER_KEY_LENGTH);
@@ -116,7 +117,6 @@ void Sender::startTransmitting() {
  */
 void Sender::start() {
   while (true) {
-
     if (sending) {
       transmit();
     }
@@ -134,41 +134,6 @@ void Sender::start() {
     }
     mbit->sleep(TX_SPEED);
   }
-};
-
-void Sender::writeBit(uint8_t bit) {
-// A debugging routine that checks if we have slept an appropriate amount of
-// time.
-#if DEBUG
-  static uint64_t last_call = 0;
-  if (last_call > 0) {
-    uint64_t diff = mbit->systemTime() - last_call;
-    if (diff < TX_SPEED) {
-      INFO(mbit, "diff is: %d milliseconds", diff);
-    }
-  }
-  last_call = mbit->systemTime();
-#endif
-
-  // Writes the value to the GPIO pin.
-  mbit->io.P0.setDigitalValue(bit > 0);
-  mbit->sleep(TX_SPEED);
-};
-
-void Sender::writeByte(uint8_t byte) {
-  // Loop over every bit in byte and sends it using writeBit.
-  // This will write the bits in BIG ENDIAN ORDER.
-  for (int i = 0; i < 8; i++) {
-    writeBit(byte & (1 << (7 - i)));
-  }
-};
-
-/**
- * Writes the marker byte
- */
-void Sender::writeMarker() {
-  writeBit(0);
-  writeByte(MARKER_BYTE);
 };
 
 void Sender::transmit() {
@@ -222,45 +187,44 @@ void Sender::transmit() {
     // Packet construction. The random number is filled into the unused places
     // to prevent the microbit from outputting the same sequence of bytes for
     // the same character.
-    uint8_t packet[PACKET_BODY_SIZE] = {morse::ESC,
-                                        obfuscated_value,
-                                        utils::parity(obfuscated_value),
-                                        (uint8_t)(padding & 0xFF),
-                                        (uint8_t)((padding >> 8) & 0xFF),
-                                        (uint8_t)((padding >> 16) & 0xFF),
-                                        (uint8_t)((padding >> 24) & 0xFF),
-                                        morse::EOW};
+    uint8_t data[PACKET_BODY_SIZE] = {
+        morse::ESC,
+        obfuscated_value,
+        utils::parity(obfuscated_value),
+        (uint8_t)(padding & 0xFF),
+        (uint8_t)((padding >> 8) & 0xFF),
+        (uint8_t)((padding >> 16) & 0xFF),
+        (uint8_t)((padding >> 24) & 0xFF),
+        morse::EOW,
+    };
 
 #if DEBUG
     INFOF(mbit, "char raw[] = {");
     for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-      INFOF(mbit, "0x%02x %s", packet[i],
-            i == PACKET_BODY_SIZE - 1 ? "" : ", ");
+      INFOF(mbit, "0x%02x %s", data[i], i == PACKET_BODY_SIZE - 1 ? "" : ", ");
     }
     INFO(mbit, "}");
 #endif
 
     // Encrypt the data.
-    cipher->encrypt((uint32_t *)packet, 2);
+    cipher->encrypt((uint32_t *)data, 2);
+
+    uint8_t packet[PACKET_SIZE] = {0};
+    packet[0] = MARKER_BYTE;
+    packet[PACKET_SIZE - 1] = MARKER_BYTE;
+
+    std::memcpy(packet + 1, data, 8);
 
 #if DEBUG
     INFOF(mbit, "char encrypted[] = {");
-    for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-      INFOF(mbit, "0x%02x %s", packet[i],
-            i == PACKET_BODY_SIZE - 1 ? "" : ", ");
+    for (int i = 0; i < PACKET_SIZE; i++) {
+      INFOF(mbit, "0x%02x %s", packet[i], i == PACKET_SIZE - 1 ? "" : ", ");
     }
     INFO(mbit, "}");
 #endif
 
-    writeMarker();
-
-    for (int i = 0; i < PACKET_BODY_SIZE; i++) {
-      writeByte(packet[i]);
-    }
-
-    writeByte(MARKER_BYTE);
-
-    mbit->io.P0.setDigitalValue(0);
+    mbit->radio.datagram.send(packet, PACKET_SIZE);
+    INFO(mbit, "sent!");
   }
 
   // Reset value before returning.

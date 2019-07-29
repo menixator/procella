@@ -8,16 +8,6 @@
 class Receiver {
 private:
   /**
-   * Number of bits read
-   */
-  uint8_t bitsRead = 0;
-
-  /**
-   * When the last activity was noticed on the GPIO pin.
-   */
-  uint64_t lastActivity = 0;
-
-  /**
    * When the last screen activity went down. Used to clean up after the screen.
    */
   uint64_t lastScreenActivity = 0;
@@ -43,19 +33,10 @@ private:
   void setupListeners();
   void tearDownListeners();
 
-  // Pulse events
-  void onPulseHigh(MicroBitEvent event);
-  void onPulseLow(MicroBitEvent event);
-
-  /*
-   * Called whenever a bit is received.
-   */
-  void onBit(uint8_t bit);
-
   /**
    * Called whenever a full packet is recieved.
    */
-  void onPacket();
+  void onPacket(MicroBitEvent event);
 
   /**
    * Resets the interal state and prepares to recieve the next packet.

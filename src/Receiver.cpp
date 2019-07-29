@@ -2,11 +2,10 @@
 
 Receiver::Receiver(MicroBit *mbit) {
   this->mbit = mbit;
+  INFO(mbit, "Receiver has been initialized");
   // Initialize the cipher.
   this->cipher = new XXTEACipher(CIPHER_KEY, CIPHER_KEY_LENGTH);
   // Prepare to listen for events.
-  mbit->io.P1.eventOn(MICROBIT_PIN_EVENT_ON_PULSE);
-  INFO(mbit, "Receiver has been initialized");
   setupListeners();
 };
 
@@ -18,60 +17,19 @@ Receiver::~Receiver() {
 
 void Receiver::setupListeners() {
   INFO(mbit, "Setting up listeners");
-  mbit->messageBus.listen(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_HI, this,
-                          &Receiver::onPulseHigh,
-                          MESSAGE_BUS_LISTENER_IMMEDIATE);
-  mbit->messageBus.listen(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_LO, this,
-                          &Receiver::onPulseLow,
-                          MESSAGE_BUS_LISTENER_IMMEDIATE);
+  mbit->messageBus.listen(MICROBIT_ID_RADIO, MICROBIT_RADIO_EVT_DATAGRAM, this,
+                          &Receiver::onPacket);
 };
 
 void Receiver::tearDownListeners() {
-  mbit->messageBus.ignore(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_HI, this,
-                          &Receiver::onPulseHigh);
-  mbit->messageBus.ignore(MICROBIT_ID_IO_P1, MICROBIT_PIN_EVT_PULSE_LO, this,
-                          &Receiver::onPulseLow);
+  mbit->messageBus.ignore(MICROBIT_ID_RADIO, MICROBIT_RADIO_EVT_DATAGRAM, this,
+                          &Receiver::onPacket);
 };
 
-void Receiver::onBit(uint8_t bit) {
-  // If a packet is being processed, ignore the new bit.
-  if (bitsRead >= PACKET_SIZE * BITS_PER_BYTE) {
-    return;
-  };
-
-  // Shift the byte we are writing to the LEFT(since we are receiving BIG ENDIAN
-  // data).
-  buffer[bitsRead / BITS_PER_BYTE] <<= 1;
-  // Add the required bit in.
-  buffer[bitsRead / BITS_PER_BYTE] += (bit & 0x1);
-
-  bitsRead++;
-  lastActivity = mbit->systemTime();
-
-  // Check if header is over
-  if (bitsRead >= BITS_PER_BYTE) {
-
-    // If the first byte is not the marker byte, reset ourselves.
-    if (buffer[0] != MARKER_BYTE) {
-      reset();
-    }
-  }
-
-  // If the full packet has been read, call onPacket()
-  if (bitsRead >= PACKET_SIZE * BITS_PER_BYTE) {
-    onPacket();
-  }
-};
-
-void Receiver::reset() {
-  bitsRead = 0;
-  lastActivity = 0;
-  // Reset the buffer
-  std::memset(buffer, 0, sizeof(buffer));
-}
-
-void Receiver::onPacket() {
+void Receiver::onPacket(MicroBitEvent _event) {
   INFO(mbit, "Complete!");
+  uint8_t buffer[PACKET_SIZE] = {0};
+  mbit->radio.datagram.recv(buffer, PACKET_SIZE);
 #if DEBUG
   INFOF(mbit, "char encrypted[] = {");
   for (int i = 0; i < PACKET_SIZE; i++) {
@@ -120,32 +78,8 @@ void Receiver::onPacket() {
   reset();
 };
 
-void Receiver::onPulseHigh(MicroBitEvent event) {
-  uint8_t repetitions = (event.timestamp / 1000) / TX_SPEED;
-  INFO(mbit, "Got a HI with %d repetitions, bits written: %d", repetitions,
-       bitsRead);
-  for (uint8_t i = 0; i < repetitions; i++) {
-    onBit(1);
-  }
-}
-
-void Receiver::onPulseLow(MicroBitEvent event) {
-  // If the first pulse is a low pulse, ignore it.
-  if (bitsRead == 0) {
-    return;
-  }
-
-  // Get the number of repetitions.
-  uint8_t repetitions = (event.timestamp / 1000) / TX_SPEED;
-  INFO(mbit, "Got a LO with %d repetitions, bits written: %d", repetitions,
-       bitsRead);
-  for (uint8_t i = 0; i < repetitions; i++) {
-    onBit(0);
-  }
-}
-
 void Receiver::start() {
-  while (1) {
+  while (true) {
     mbit->sleep(TX_SPEED);
     // Clears the screen when 1000ms have passed without the screen
     // changing.
@@ -154,10 +88,7 @@ void Receiver::start() {
       lastScreenActivity = 0;
       mbit->display.clear();
     }
-
-    // Reset if a a packet goes incomplete for too long.
-    if (lastActivity > 0 && mbit->systemTime() - lastActivity > 3000) {
-      reset();
-    }
   }
 }
+
+void Receiver::reset() {}

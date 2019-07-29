@@ -59,21 +59,6 @@ private:
   void transmit();
 
   /**
-   * Writes a distinguishable sequences of bits to the GPIO pin that starts and
-   * ends with a high bit.
-   */
-  void writeMarker();
-
-  /**
-   * Writes a single bit to the GPIO.
-   */
-  void writeBit(uint8_t bit);
-  /**
-   * Writes a byte to the GPIO pin.
-   */
-  void writeByte(uint8_t byte);
-
-  /**
    * Helpers to allow the transmission to be started when the buffer reaches a
    * limit.
    */
